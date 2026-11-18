@@ -1,0 +1,166 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:NetZapret.UI.ViewModels"
+        x:Class="NetZapret.UI.Views.StrategyDetailsWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="{Binding EditorTitle}"
+        Width="800"
+        Height="660"
+        MinWidth="660"
+        MinHeight="520"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BgPrimary}">
+
+  <Grid RowDefinitions="*,Auto" Margin="20" RowSpacing="14">
+    <TabControl Grid.Row="0" SelectedIndex="{Binding EditorTabIndex}">
+      <TabItem Header="Последний тест">
+        <Grid RowDefinitions="Auto,*" RowSpacing="12" Margin="0,12,0,0">
+          <Border Grid.Row="0" Classes="card" Padding="14" IsVisible="{Binding !EditorHasLastBenchmark}">
+            <TextBlock Text="Эта стратегия ещё не проверялась. Запустите тестирование на вкладке «Тесты и подбор»."
+                       FontSize="13"
+                       Foreground="{StaticResource TextMuted}"
+                       TextWrapping="Wrap" />
+          </Border>
+
+          <Border Grid.Row="0" Classes="card" Padding="14" IsVisible="{Binding EditorHasLastBenchmark}">
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="16">
+              <StackPanel Grid.Column="0" Spacing="2">
+                <TextBlock Text="{Binding EditorTargetLastBenchmark.StrategyName, FallbackValue=''}" FontSize="15" FontWeight="Bold" />
+                <TextBlock Text="{Binding EditorTargetLastBenchmark.StatusBadge, FallbackValue=''}" FontSize="12" Foreground="{StaticResource AccentBlue}" />
+              </StackPanel>
+              <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                <TextBlock Text="OK" FontSize="11" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding EditorTargetLastBenchmark.OkCount, FallbackValue='0'}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource AccentGreen}" HorizontalAlignment="Center" />
+              </StackPanel>
+              <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                <TextBlock Text="ERR" FontSize="11" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding EditorTargetLastBenchmark.FailCount, FallbackValue='0'}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource AccentRed}" HorizontalAlignment="Center" />
+              </StackPanel>
+              <StackPanel Grid.Column="3" HorizontalAlignment="Center">
+                <TextBlock Text="UNSUP" FontSize="11" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding EditorTargetLastBenchmark.UnsupportedCount, FallbackValue='0'}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource AccentYellow}" HorizontalAlignment="Center" />
+              </StackPanel>
+              <StackPanel Grid.Column="4" HorizontalAlignment="Center">
+                <TextBlock Text="BLOCK" FontSize="11" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding EditorTargetLastBenchmark.BlockedCount, FallbackValue='0'}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource AccentYellow}" HorizontalAlignment="Center" />
+              </StackPanel>
+              <StackPanel Grid.Column="5" HorizontalAlignment="Center">
+                <TextBlock Text="Ср. пинг" FontSize="11" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding EditorTargetLastBenchmark.AvgPingText, FallbackValue='—'}" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" />
+              </StackPanel>
+            </Grid>
+          </Border>
+
+          <Border Grid.Row="1" Classes="card" Padding="12" IsVisible="{Binding EditorHasLastBenchmark}">
+            <ScrollViewer Padding="0,0,14,0">
+              <StackPanel Spacing="8">
+                <Border Background="#3B1219"
+                        BorderBrush="#991B1B"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Padding="10,8"
+                        IsVisible="{Binding EditorTargetLastBenchmark.HasError, FallbackValue=False}">
+                  <TextBlock Text="{Binding EditorTargetLastBenchmark.Error, FallbackValue=''}" FontSize="12" Foreground="#FCA5A5" TextWrapping="Wrap" />
+                </Border>
+
+                <ItemsControl ItemsSource="{Binding EditorTargetLastBenchmark.TargetDetails}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:BenchmarkTargetDetailVm">
+                      <Border Background="{StaticResource BgElevated}"
+                              BorderBrush="{StaticResource BorderSubtle}"
+                              BorderThickness="1"
+                              CornerRadius="6"
+                              Padding="10,7"
+                              Margin="0,0,0,6">
+                        <StackPanel Spacing="3">
+                          <Grid ColumnDefinitions="180,95,95,95,*" ColumnSpacing="8">
+                            <TextBlock Grid.Column="0" Text="{Binding TargetName}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Grid.Column="1" Text="{Binding Http11Status, StringFormat='HTTP: {0}'}" FontSize="11" Foreground="{StaticResource TextMuted}" />
+                            <TextBlock Grid.Column="2" Text="{Binding Tls12Status, StringFormat='TLS1.2: {0}'}" FontSize="11" Foreground="{StaticResource TextMuted}" />
+                            <TextBlock Grid.Column="3" Text="{Binding Tls13Status, StringFormat='TLS1.3: {0}'}" FontSize="11" Foreground="{StaticResource TextMuted}" />
+                            <TextBlock Grid.Column="4" Text="{Binding PingText, StringFormat='Ping: {0}'}" FontSize="11" Foreground="{StaticResource AccentBlue}" HorizontalAlignment="Right" />
+                          </Grid>
+                          <TextBlock Text="{Binding ErrorHint}"
+                                     FontSize="11"
+                                     Foreground="{StaticResource AccentRed}"
+                                     TextWrapping="Wrap"
+                                     IsVisible="{Binding ErrorHint, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                        </StackPanel>
+                      </Border>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </ScrollViewer>
+          </Border>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="Параметры и конструктор">
+        <Border Classes="card" Padding="14" Margin="0,12,0,0">
+          <ScrollViewer Padding="0,0,16,0">
+            <StackPanel Spacing="12">
+              <Grid ColumnDefinitions="*,180" ColumnSpacing="12">
+                <StackPanel Grid.Column="0" Spacing="4">
+                  <TextBlock Text="Название стратегии" FontSize="12" Foreground="{StaticResource TextMuted}" />
+                  <TextBox Text="{Binding EditorName}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Spacing="4">
+                  <TextBlock Text="Категория" FontSize="12" Foreground="{StaticResource TextMuted}" />
+                  <TextBox Text="{Binding EditorCategory}" />
+                </StackPanel>
+              </Grid>
+
+              <StackPanel Spacing="4">
+                <TextBlock Text="Описание" FontSize="12" Foreground="{StaticResource TextMuted}" />
+                <TextBox Text="{Binding EditorDescription}" TextWrapping="Wrap" />
+              </StackPanel>
+
+              <StackPanel Spacing="4">
+                <TextBlock Text="Web TCP (используйте {FAKES} перед именем .bin файла)" FontSize="12" Foreground="{StaticResource TextMuted}" />
+                <TextBox Text="{Binding EditorWebArgs}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="76" FontFamily="Consolas, monospace" FontSize="12" />
+              </StackPanel>
+
+              <StackPanel Spacing="4">
+                <TextBlock Text="Google / YouTube TCP (необязательно — если пусто, берётся из Web)" FontSize="12" Foreground="{StaticResource TextMuted}" />
+                <TextBox Text="{Binding EditorGoogleArgs}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="64" FontFamily="Consolas, monospace" FontSize="12" />
+              </StackPanel>
+
+              <StackPanel Spacing="4">
+                <TextBlock Text="Discord Media TCP (необязательно — если пусто, берётся из Google/Web)" FontSize="12" Foreground="{StaticResource TextMuted}" />
+                <TextBox Text="{Binding EditorDiscordMediaArgs}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="64" FontFamily="Consolas, monospace" FontSize="12" />
+              </StackPanel>
+
+              <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <StackPanel Grid.Column="0" Spacing="4">
+                  <TextBlock Text="QUIC Repeats (1–20)" FontSize="12" Foreground="{StaticResource TextMuted}" />
+                  <TextBox Text="{Binding EditorQuicRepeats}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Spacing="4">
+                  <TextBlock Text="Game TCP Cutoff (n2 / n3 / n4 / n5)" FontSize="12" Foreground="{StaticResource TextMuted}" />
+                  <TextBox Text="{Binding EditorGameTcpCutoff}" />
+                </StackPanel>
+              </Grid>
+            </StackPanel>
+          </ScrollViewer>
+        </Border>
+      </TabItem>
+    </TabControl>
+
+    <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
+      <Button Grid.Column="0"
+              Content="Удалить стратегию"
+              Classes="danger"
+              Command="{Binding DeleteCustomStrategyFromEditorCommand}"
+              IsVisible="{Binding EditorCanDelete}" />
+      <TextBlock Grid.Column="1"
+                 Text="{Binding EditorError}"
+                 Foreground="{StaticResource AccentRed}"
+                 FontSize="12"
+                 VerticalAlignment="Center"
+                 TextWrapping="Wrap" />
+      <Button Grid.Column="2" Content="Закрыть" Click="OnCloseClick" />
+      <Button Grid.Column="3" Content="{Binding EditorSaveButtonText}" Classes="success" Command="{Binding SaveCustomStrategyCommand}" />
+    </Grid>
+  </Grid>
+</Window>

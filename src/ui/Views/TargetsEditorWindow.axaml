@@ -1,0 +1,58 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:NetZapret.UI.ViewModels"
+        x:Class="NetZapret.UI.Views.TargetsEditorWindow"
+        x:Name="TargetsWin"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Проверяемые домены и IP"
+        Width="740"
+        Height="560"
+        MinWidth="600"
+        MinHeight="440"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BgPrimary}">
+
+  <Grid RowDefinitions="Auto,*,Auto" Margin="20" RowSpacing="14">
+    <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+      <StackPanel Grid.Column="0" Spacing="2">
+        <TextBlock Text="Проверяемые домены и IP" FontSize="18" FontWeight="Bold" />
+        <TextBlock Text="Используются при стандартном и быстром тестировании стратегий" FontSize="12" Foreground="{StaticResource TextMuted}" />
+      </StackPanel>
+      <Button Grid.Column="1" Content="Сбросить изменения" Command="{Binding ReloadTestTargetsCommand}" VerticalAlignment="Center" />
+      <Button Grid.Column="2" Content="Сохранить" Classes="success" Command="{Binding SaveTestTargetsCommand}" VerticalAlignment="Center" />
+    </Grid>
+
+    <Border Grid.Row="1" Classes="card" Padding="12">
+      <ScrollViewer Padding="0,0,14,0">
+        <ItemsControl ItemsSource="{Binding TestTargets}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:TargetItemVm">
+              <Grid ColumnDefinitions="190,*,Auto" ColumnSpacing="10" Margin="0,0,0,8">
+                <TextBox Grid.Column="0" Text="{Binding Name}" Watermark="Название" FontSize="12" />
+                <TextBox Grid.Column="1" Text="{Binding Value}" Watermark="https://site.com или PING:1.1.1.1" FontSize="12" />
+                <Button Grid.Column="2"
+                        Content="Удалить"
+                        Classes="danger"
+                        Padding="12,6"
+                        FontSize="12"
+                        Command="{ReflectionBinding DataContext.RemoveTestTargetCommand, ElementName=TargetsWin}"
+                        CommandParameter="{Binding}" />
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </Border>
+
+    <Border Grid.Row="2" Classes="card" Padding="14">
+      <StackPanel Spacing="10">
+        <TextBlock Text="Добавить новую цель" FontSize="14" FontWeight="SemiBold" />
+        <Grid ColumnDefinitions="190,*,Auto" ColumnSpacing="10">
+          <TextBox Grid.Column="0" Text="{Binding NewTargetName}" Watermark="Имя (напр. MySite)" FontSize="12" />
+          <TextBox Grid.Column="1" Text="{Binding NewTargetValue}" Watermark="https://example.com или PING:8.8.8.8" FontSize="12" />
+          <Button Grid.Column="2" Content="Добавить" Classes="primary" Command="{Binding AddTestTargetCommand}" Padding="16,8" />
+        </Grid>
+      </StackPanel>
+    </Border>
+  </Grid>
+</Window>

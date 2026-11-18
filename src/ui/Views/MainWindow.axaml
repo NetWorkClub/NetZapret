@@ -1,0 +1,133 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:NetZapret.UI.ViewModels"
+        xmlns:views="using:NetZapret.UI.Views"
+        x:Class="NetZapret.UI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="NetZapret"
+        Width="1120"
+        Height="740"
+        MinWidth="900"
+        MinHeight="600"
+        WindowStartupLocation="CenterScreen">
+
+  <Grid ColumnDefinitions="260,*">
+    <Border Grid.Column="0"
+            Background="{StaticResource BgSidebar}"
+            BorderBrush="{StaticResource BorderSubtle}"
+            BorderThickness="0,0,1,0"
+            Padding="16,20">
+      <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <StackPanel Grid.Row="0" Spacing="4" Margin="4,0,4,18">
+          <TextBlock Text="NetZapret" FontSize="22" FontWeight="Bold" />
+          <TextBlock Text="{Binding PlatformLabel}" FontSize="12" Foreground="{StaticResource TextMuted}" />
+        </StackPanel>
+
+        <Border Grid.Row="1"
+                Background="{StaticResource BgCard}"
+                BorderBrush="{StaticResource BorderSubtle}"
+                BorderThickness="1"
+                CornerRadius="10"
+                Padding="12"
+                Margin="0,0,0,18">
+          <StackPanel Spacing="6">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Ellipse Width="10" Height="10" Fill="{StaticResource AccentGreen}" IsVisible="{Binding IsBypassRunning}" VerticalAlignment="Center" />
+              <Ellipse Width="10" Height="10" Fill="{StaticResource AccentRed}" IsVisible="{Binding !IsBypassRunning}" VerticalAlignment="Center" />
+              <TextBlock Text="{Binding StatusText}" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center" />
+            </StackPanel>
+            <TextBlock Text="{Binding ActiveServiceStrategyText}"
+                       FontSize="11"
+                       Foreground="{StaticResource TextMuted}"
+                       TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="{Binding DriverStatusText, StringFormat='Драйвер: {0}'}"
+                       FontSize="11"
+                       Foreground="{StaticResource TextMuted}" />
+          </StackPanel>
+        </Border>
+
+        <StackPanel Grid.Row="2" Spacing="6">
+          <Button Classes="nav"
+                  Classes.active="{Binding IsDashboardTab}"
+                  Command="{Binding SelectTabCommand}"
+                  CommandParameter="0"
+                  Content="Стратегии и запуск" />
+          <Button Classes="nav"
+                  Classes.active="{Binding IsBenchmarkTab}"
+                  Command="{Binding SelectTabCommand}"
+                  CommandParameter="1"
+                  Content="Тесты и подбор" />
+          <Button Classes="nav"
+                  Classes.active="{Binding IsFiltersTab}"
+                  Command="{Binding SelectTabCommand}"
+                  CommandParameter="2"
+                  Content="Фильтры и списки" />
+          <Button Classes="nav"
+                  Classes.active="{Binding IsDiagnosticsTab}"
+                  Command="{Binding SelectTabCommand}"
+                  CommandParameter="3"
+                  Content="Диагностика и обновления" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Spacing="6">
+          <Button Content="Перезапуск от админа"
+                  Classes="primary"
+                  IsVisible="{Binding CanRestartElevated}"
+                  Command="{Binding RestartAsAdminCommand}"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Center"
+                  FontSize="12" />
+          <Button Content="Обновить статус"
+                  Command="{Binding RefreshStatusCommand}"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Center"
+                  FontSize="12" />
+          <TextBlock Text="{Binding AppVersionText, StringFormat='NetZapret v{0}'}"
+                     FontSize="11"
+                     Foreground="{StaticResource TextMuted}"
+                     HorizontalAlignment="Center"
+                     Margin="0,4,0,0" />
+          <TextBlock Text="{Binding CurrentVersionText, StringFormat='База списков: {0}'}"
+                     FontSize="11"
+                     Foreground="{StaticResource TextMuted}"
+                     HorizontalAlignment="Center" />
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Grid Grid.Column="1" RowDefinitions="*,Auto">
+      <Grid Grid.Row="0" Margin="22,20,22,12">
+        <views:DashboardView IsVisible="{Binding IsDashboardTab}" />
+        <views:BenchmarkView IsVisible="{Binding IsBenchmarkTab}" />
+        <views:FiltersView IsVisible="{Binding IsFiltersTab}" />
+        <views:DiagnosticsView IsVisible="{Binding IsDiagnosticsTab}" />
+      </Grid>
+
+      <Border Grid.Row="1"
+              Background="{StaticResource BgSidebar}"
+              BorderBrush="{StaticResource BorderSubtle}"
+              BorderThickness="0,1,0,0"
+              Padding="20,10">
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock Grid.Column="0"
+                     Text="{Binding ActivityMessage}"
+                     FontSize="12"
+                     Foreground="{StaticResource TextMuted}"
+                     VerticalAlignment="Center"
+                     TextTrimming="CharacterEllipsis" />
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+            <ProgressBar IsIndeterminate="True"
+                         Width="90"
+                         Height="4"
+                         IsVisible="{Binding IsBusy}"
+                         VerticalAlignment="Center" />
+            <TextBlock Text="{Binding ElevationStatusText}"
+                       FontSize="11"
+                       Foreground="{StaticResource TextMuted}"
+                       VerticalAlignment="Center" />
+          </StackPanel>
+        </Grid>
+      </Border>
+    </Grid>
+  </Grid>
+</Window>

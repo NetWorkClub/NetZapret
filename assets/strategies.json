@@ -1,0 +1,300 @@
+{
+	"version": 1,
+	"defaults": {
+		"webPortsTcp": "80,443",
+		"ipsetPortsTcp": "80,443,8443",
+		"discordMediaPortsTcp": "2053,2083,2087,2096,8443",
+		"discordVoicePortsUdp": "19294-19344,50000-50100",
+		"quic": {
+			"repeats": 6,
+			"fakeQuic": "quic_initial_www_google_com.bin"
+		},
+		"discordVoice": {
+			"l7": "discord,stun",
+			"repeats": 6,
+			"fakesDiscord": ["ACTIVE_DISCORD_UDP.bin"],
+			"fakesStun": ["ACTIVE_DISCORD_UDP.bin"]
+		},
+		"gameUdp": {
+			"repeats": 12,
+			"cutoff": "n2",
+			"fakeUnknownUdp": ["ACTIVE_GAME_UDP.bin"]
+		}
+	},
+	"strategies": [
+		{
+			"id": "multisplit-4pda",
+			"name": "Multisplit (4PDA)",
+			"legacyName": "general",
+			"category": "multisplit",
+			"description": "Нарезка ClientHello без фейков. Лучший вариант для старта и игр без лишнего трафика.",
+			"recommended": true,
+			"google": "--dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_google_com.bin",
+			"web": "--dpi-desync=multisplit --dpi-desync-split-seqovl=568 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_4pda_to.bin",
+			"gameTcpCutoff": "n3"
+		},
+		{
+			"id": "multisplit-google",
+			"name": "Multisplit (Google)",
+			"legacyName": "ALT6",
+			"category": "multisplit",
+			"description": "Единый профиль multisplit с шаблоном Google (seqovl=681).",
+			"web": "--dpi-desync=multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_google_com.bin",
+			"gameTcpCutoff": "n3"
+		},
+		{
+			"id": "multisplit-pos2",
+			"name": "Multisplit (Pos 2)",
+			"legacyName": "ALT2",
+			"category": "multisplit",
+			"description": "Смещённая нарезка со 2-го байта (seqovl=652). Помогает, если pos=1 режется ТСПУ.",
+			"web": "--dpi-desync=multisplit --dpi-desync-split-seqovl=652 --dpi-desync-split-pos=2 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_google_com.bin",
+			"gameTcpCutoff": "n3"
+		},
+		{
+			"id": "multisplit-sniext-syndata",
+			"name": "Multisplit SNI + Syndata",
+			"legacyName": "ALT7",
+			"category": "multisplit",
+			"description": "Разрыв в районе SNI для белых списков и syndata для IPSet/игр.",
+			"web": "--dpi-desync=multisplit --dpi-desync-split-pos=2,sniext+1 --dpi-desync-split-seqovl=679 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_google_com.bin",
+			"ipsetWeb": "--dpi-desync=syndata",
+			"gameTcp": "--dpi-desync=syndata --dpi-desync-any-protocol=1 --dpi-desync-cutoff=n4"
+		},
+		{
+			"id": "fakedsplit-ts",
+			"name": "Fake + FakedSplit (TS)",
+			"legacyName": "ALT",
+			"category": "fake-split",
+			"description": "Классика: фейки с TCP timestamp (ts) + fakedsplit.",
+			"google": "--dpi-desync=fake,fakedsplit --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fakedsplit-pattern=0x00 --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin",
+			"web": "--dpi-desync=fake,fakedsplit --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fakedsplit-pattern=0x00 --dpi-desync-fake-tls={FAKES}stun.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameTcpCutoff": "n4",
+			"gameUdp": { "repeats": 12, "cutoff": "n3" }
+		},
+		{
+			"id": "fakemultisplit-badseq",
+			"name": "Fake + Multisplit (BadSeq)",
+			"legacyName": "ALT4",
+			"category": "fake-split",
+			"description": "Фейки с искажённым SEQ (+1000) + multisplit. Хорошо работает там, где режется ts.",
+			"google": "--dpi-desync=fake,multisplit --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=1000 --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin",
+			"web": "--dpi-desync=fake,multisplit --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=1000 --dpi-desync-fake-tls={FAKES}stun.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameTcpCutoff": "n3",
+			"gameUdp": { "repeats": 10, "cutoff": "n2" }
+		},
+		{
+			"id": "fakemultisplit-sferum",
+			"name": "Fake + Multisplit (Sferum/Stun2)",
+			"legacyName": "ALT11",
+			"category": "fake-split",
+			"description": "Усиленный профиль (repeats=8/11) с имитацией Sferum и STUN.",
+			"quic": { "repeats": 11 },
+			"google": "--dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_google_com.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin",
+			"web": "--dpi-desync=fake,multisplit --dpi-desync-split-seqovl=664 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_sferum_ru.bin --dpi-desync-fake-tls={FAKES}stun2.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_www_sferum_ru.bin --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameTcpCutoff": "n4",
+			"gameUdp": { "repeats": 10, "cutoff": "n4" }
+		},
+		{
+			"id": "fakemultisplit-hybrid",
+			"name": "Hybrid (HostFake Google + Multisplit)",
+			"legacyName": "ALT12",
+			"category": "fake-split",
+			"description": "Раздельный обход: HostFakeSplit для Google, Fake+Multisplit для остального.",
+			"quic": { "repeats": 11 },
+			"discordVoice": {
+				"repeats": 3,
+				"fakesDiscord": ["stun.bin", "ACTIVE_DISCORD_UDP.bin"]
+			},
+			"discordMedia": "--dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_google_com.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin",
+			"google": "--dpi-desync=hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com",
+			"web": "--dpi-desync=fake,multisplit --dpi-desync-split-seqovl=664 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_sferum_ru.bin --dpi-desync-fake-tls={FAKES}stun.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_www_sferum_ru.bin --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameTcpCutoff": "n4",
+			"gameUdp": { "repeats": 10, "cutoff": "n4" }
+		},
+		{
+			"id": "hostfake-ya",
+			"name": "HostFakeSplit (Ya.ru)",
+			"legacyName": "ALT3",
+			"category": "hostfake",
+			"description": "Динамический Fake + HostFakeSplit с подменой SNI на ya.ru.",
+			"google": "--dpi-desync=fake,hostfakesplit --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-hostfakesplit-mod=host=www.google.com,altorder=1 --dpi-desync-fooling=ts",
+			"web": "--dpi-desync=fake,hostfakesplit --dpi-desync-fake-tls-mod=rnd,dupsid,sni=ya.ru --dpi-desync-hostfakesplit-mod=host=ya.ru,altorder=1 --dpi-desync-fooling=ts --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameTcpCutoff": "n4",
+			"gameUdp": { "repeats": 10, "cutoff": "n4" }
+		},
+		{
+			"id": "hostfake-ozon",
+			"name": "HostFakeSplit (Ozon + MD5Sig)",
+			"legacyName": "ALT9",
+			"category": "hostfake",
+			"description": "Подмена Host на ozon.ru с комбинацией ts,md5sig на доменах.",
+			"google": "--dpi-desync=hostfakesplit --dpi-desync-repeats=4 --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com",
+			"web": "--dpi-desync=hostfakesplit --dpi-desync-repeats=4 --dpi-desync-fooling=ts,md5sig --dpi-desync-hostfakesplit-mod=host=ozon.ru",
+			"ipsetWeb": "--dpi-desync=hostfakesplit --dpi-desync-repeats=4 --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=ozon.ru",
+			"gameTcp": "--dpi-desync=hostfakesplit --dpi-desync-repeats=4 --dpi-desync-any-protocol=1 --dpi-desync-cutoff=n3 --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=ozon.ru"
+		},
+		{
+			"id": "hostfake-mailru",
+			"name": "HostFakeSplit (Mail.ru + SochiPark)",
+			"legacyName": "ALT13",
+			"category": "hostfake",
+			"description": "Раздельный HostFake на mail.ru с TLS-фейками Sochi Park / Stun2.",
+			"quic": { "repeats": 11 },
+			"discordVoice": { "repeats": 5 },
+			"discordMedia": "--dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=7 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_google_com.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin",
+			"google": "--dpi-desync=hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com",
+			"googleKeepIpId": true,
+			"web": "--dpi-desync=fake,hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=mail.ru,altorder=1 --dpi-desync-repeats=5 --dpi-desync-fake-tls={FAKES}tls_clienthello_sochi_park.bin --dpi-desync-fake-tls={FAKES}stun2.bin --dpi-desync-fake-http={FAKES}tls_clienthello_sochi_park.bin",
+			"gameTcpCutoff": "n4",
+			"gameUdp": { "repeats": 10, "cutoff": "n4" }
+		},
+		{
+			"id": "autotls-multidisorder",
+			"name": "Fake TLS Auto (MultiDisorder)",
+			"legacyName": "FAKE TLS AUTO",
+			"category": "auto-tls",
+			"description": "Генерирует фейковый TLS на лету (rnd, dupsid, sni) + multidisorder.",
+			"quic": { "repeats": 11 },
+			"web": "--dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"google": "--dpi-desync=fake,multidisorder --dpi-desync-split-pos=1,midsld --dpi-desync-repeats=11 --dpi-desync-fooling=badseq --dpi-desync-fake-tls=0x00000000 --dpi-desync-fake-tls=! --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com",
+			"gameTcpCutoff": "n4",
+			"gameUdp": { "repeats": 10, "cutoff": "n2" }
+		},
+		{
+			"id": "autotls-fakedsplit",
+			"name": "Fake TLS Auto (FakedSplit)",
+			"legacyName": "FAKE TLS AUTO ALT",
+			"category": "auto-tls",
+			"description": "Автогенерация TLS + fakedsplit + badseq increment=2.",
+			"quic": { "repeats": 11 },
+			"google": "--dpi-desync=fake,fakedsplit --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-repeats=8 --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com",
+			"web": "--dpi-desync=fake,fakedsplit --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-repeats=8 --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameTcpCutoff": "n3",
+			"gameUdp": { "repeats": 10, "cutoff": "n2" }
+		},
+		{
+			"id": "autotls-multisplit-badseq",
+			"name": "Fake TLS Auto (Multisplit BadSeq)",
+			"legacyName": "FAKE TLS AUTO ALT2",
+			"category": "auto-tls",
+			"description": "Автогенерация TLS + multisplit с большим сдвигом SEQ (10M).",
+			"quic": { "repeats": 11 },
+			"google": "--dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=10000000 --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_google_com.bin --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com",
+			"web": "--dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=10000000 --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_google_com.bin --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameTcpCutoff": "n3",
+			"gameUdp": { "repeats": 10, "cutoff": "n2" }
+		},
+		{
+			"id": "autotls-multisplit-ts",
+			"name": "Fake TLS Auto (Multisplit TS)",
+			"legacyName": "FAKE TLS AUTO ALT3",
+			"category": "auto-tls",
+			"description": "Аналог ALT2, но использует TCP timestamp (ts) вместо badseq.",
+			"quic": { "repeats": 11 },
+			"google": "--dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_google_com.bin --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com",
+			"web": "--dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_google_com.bin --dpi-desync-fake-tls-mod=rnd,dupsid,sni=www.google.com --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameTcpCutoff": "n4",
+			"gameUdp": { "repeats": 10, "cutoff": "n3" }
+		},
+		{
+			"id": "simplefake-ts",
+			"name": "Simple Fake (TS + HostFake Google)",
+			"legacyName": "SIMPLE FAKE",
+			"category": "simple-fake",
+			"description": "Лёгкий профиль только на фейках с ts, для Google — hostfakesplit.",
+			"discordMedia": "--dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin",
+			"google": "--dpi-desync=hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com",
+			"web": "--dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameTcpCutoff": "n4",
+			"gameUdp": { "repeats": 12, "cutoff": "n3" }
+		},
+		{
+			"id": "simplefake-badseq",
+			"name": "Simple Fake (BadSeq)",
+			"legacyName": "SIMPLE FAKE ALT",
+			"category": "simple-fake",
+			"description": "Чистые фейки через badseq (increment=2) + stun2.",
+			"google": "--dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin",
+			"web": "--dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-fake-tls={FAKES}stun2.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameTcpCutoff": "n3",
+			"gameUdp": { "repeats": 10, "cutoff": "n2" }
+		},
+		{
+			"id": "simplefake-ts-sferum",
+			"name": "Simple Fake (TS + Sferum/Stun2)",
+			"legacyName": "SIMPLE FAKE ALT2",
+			"category": "simple-fake",
+			"description": "Чистые фейки с ts и шаблонами stun2 / sferum.ru.",
+			"discordMedia": "--dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin",
+			"google": "--dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin",
+			"web": "--dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls={FAKES}stun2.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_www_sferum_ru.bin --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameTcp": "--dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-any-protocol=1 --dpi-desync-cutoff=n5 --dpi-desync-fooling=ts --dpi-desync-fake-tls={FAKES}stun2.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_www_sferum_ru.bin --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin --dpi-desync-fake-unknown={FAKES}stun2.bin --dpi-desync-fake-unknown={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameUdp": { "repeats": 12, "cutoff": "n3" }
+		},
+		{
+			"id": "simplefake-4pda",
+			"name": "Simple Fake (TS + 4PDA)",
+			"legacyName": "ALT10",
+			"category": "simple-fake",
+			"description": "Чистые фейки с ts и шаблоном 4pda.to.",
+			"discordMedia": "--dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin --dpi-desync-fake-tls-mod=none",
+			"google": "--dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin",
+			"web": "--dpi-desync=fake --dpi-desync-repeats=6 --dpi-desync-fooling=ts --dpi-desync-fake-tls={FAKES}stun.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_4pda_to.bin --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameTcpCutoff": "n3"
+		},
+		{
+			"id": "simplefake-nomod-badseq",
+			"name": "Simple Fake (Raw BadSeq)",
+			"legacyName": "ALT8",
+			"category": "simple-fake",
+			"description": "Фейки без модификации TLS (fake-tls-mod=none) и badseq increment=2.",
+			"google": "--dpi-desync=fake --dpi-desync-fake-tls-mod=none --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2",
+			"web": "--dpi-desync=fake --dpi-desync-fake-tls-mod=none --dpi-desync-repeats=6 --dpi-desync-fooling=badseq --dpi-desync-badseq-increment=2 --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameTcpCutoff": "n3"
+		},
+		{
+			"id": "exp-l7",
+			"name": "Experimental (L7 QUIC + Stun2)",
+			"legacyName": "EXP",
+			"category": "experimental",
+			"description": "Экспериментальная: фильтр QUIC по L7, расширенный Discord UDP, seqovl=480.",
+			"quic": { "useL7": true, "repeats": 11 },
+			"discordVoice": {
+				"l7": "discord,stun,unknown",
+				"anyProtocol": true,
+				"cutoff": "n4",
+				"repeats": 4,
+				"fakesDiscord": [
+					"quic_initial_www_google_com.bin",
+					"ACTIVE_DISCORD_UDP.bin"
+				],
+				"fakesUnknownUdp": [
+					"quic_initial_www_google_com.bin",
+					"ACTIVE_DISCORD_UDP.bin"
+				]
+			},
+			"discordMedia": "--dpi-desync=fake,multisplit --dpi-desync-split-seqovl=681 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_google_com.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_www_google_com.bin",
+			"google": "--dpi-desync=hostfakesplit --dpi-desync-fooling=ts --dpi-desync-hostfakesplit-mod=host=www.google.com",
+			"web": "--dpi-desync=fake,multisplit --dpi-desync-split-seqovl=480 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=4 --dpi-desync-split-seqovl-pattern={FAKES}stun2.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_www_sferum_ru.bin --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"ipsetWebExcludeDomains": ["fonts.googleapis.com"],
+			"gameTcp": "--dpi-desync=fake,multisplit --dpi-desync-any-protocol=1 --dpi-desync-cutoff=n4 --dpi-desync-split-seqovl=664 --dpi-desync-split-pos=1 --dpi-desync-fooling=ts --dpi-desync-repeats=8 --dpi-desync-split-seqovl-pattern={FAKES}tls_clienthello_www_sferum_ru.bin --dpi-desync-fake-tls={FAKES}stun2.bin --dpi-desync-fake-tls={FAKES}tls_clienthello_www_sferum_ru.bin --dpi-desync-fake-http={FAKES}tls_clienthello_www_sferum_ru.bin",
+			"gameUdp": {
+				"repeats": 5,
+				"cutoff": "n4",
+				"fakeUnknownUdp": ["quic_initial_4pda_to.bin", "ACTIVE_GAME_UDP.bin"]
+			}
+		},
+		{
+			"id": "global-syndata",
+			"name": "Global IPv4 Syndata",
+			"legacyName": "ALT5",
+			"category": "experimental",
+			"description": "Применяет syndata,multidisorder ко всему IPv4 TCP-трафику. Использовать только если ничего не помогло.",
+			"advancedWarning": true,
+			"globalIpv4Mode": "--dpi-desync=syndata,multidisorder",
+			"gameTcp": "--dpi-desync=syndata,multidisorder --dpi-desync-any-protocol=1 --dpi-desync-cutoff=n4",
+			"gameUdp": { "repeats": 14, "cutoff": "n3" }
+		}
+	]
+}

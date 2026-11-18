@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <RootNamespace>NetZapret.UI</RootNamespace>
+    <AssemblyName>NetZapret</AssemblyName>
+    <ApplicationIcon>Assets\zapret.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.23" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.23" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.23" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.23" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\core\core.csproj" />
+    <ProjectReference Include="..\platform\platform.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\assets\**" CopyToOutputDirectory="PreserveNewest" LinkBase="assets" />
+  </ItemGroup>
+
+  <Target Name="CopyLinuxDaemonOnBuild" AfterTargets="Build" Condition="Exists('..\daemon\daemon.csproj') And ($([MSBuild]::IsOSPlatform('Linux')) Or '$(RuntimeIdentifier)' == 'linux-x64' Or '$(RuntimeIdentifier)' == 'linux-arm64')">
+    <Exec Command="dotnet build &quot;..\daemon\daemon.csproj&quot; -c $(Configuration)" />
+    <ItemGroup>
+      <_DaemonOut Include="..\daemon\bin\$(Configuration)\$(TargetFramework)\NetZapret.Daemon*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_DaemonOut)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CopyLinuxDaemonOnPublish" AfterTargets="Publish" Condition="Exists('..\daemon\daemon.csproj') And ('$(RuntimeIdentifier)' == 'linux-x64' Or '$(RuntimeIdentifier)' == 'linux-arm64' Or ($([MSBuild]::IsOSPlatform('Linux')) And '$(RuntimeIdentifier)' == ''))">
+    <PropertyGroup>
+      <_DaemonPublishArgs>-c $(Configuration)</_DaemonPublishArgs>
+      <_DaemonPublishArgs Condition="'$(RuntimeIdentifier)' != ''">$(_DaemonPublishArgs) -r $(RuntimeIdentifier)</_DaemonPublishArgs>
+      <_DaemonPublishArgs Condition="'$(RuntimeIdentifier)' != '' And '$(SelfContained)' != ''">$(_DaemonPublishArgs) --self-contained $(SelfContained)</_DaemonPublishArgs>
+      <_DaemonPublishArgs Condition="'$(Version)' != ''">$(_DaemonPublishArgs) -p:Version=&quot;$(Version)&quot;</_DaemonPublishArgs>
+      <_DaemonPublishArgs Condition="'$(DebugType)' != ''">$(_DaemonPublishArgs) -p:DebugType=$(DebugType)</_DaemonPublishArgs>
+      <_DaemonPublishArgs Condition="'$(DebugSymbols)' != ''">$(_DaemonPublishArgs) -p:DebugSymbols=$(DebugSymbols)</_DaemonPublishArgs>
+    </PropertyGroup>
+    <Exec Command="dotnet publish &quot;..\daemon\daemon.csproj&quot; $(_DaemonPublishArgs) -o &quot;$(PublishDir.TrimEnd('\'))&quot;" />
+  </Target>
+
+</Project>

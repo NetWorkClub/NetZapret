@@ -1,0 +1,86 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NetZapret.UI.App"
+             RequestedThemeVariant="Dark">
+
+  <Application.Resources>
+    <SolidColorBrush x:Key="BgPrimary" Color="#0E1117" />
+    <SolidColorBrush x:Key="BgSidebar" Color="#131720" />
+    <SolidColorBrush x:Key="BgCard" Color="#181D27" />
+    <SolidColorBrush x:Key="BgElevated" Color="#202634" />
+    <SolidColorBrush x:Key="BorderSubtle" Color="#2A3242" />
+    <SolidColorBrush x:Key="TextPrimary" Color="#F0F4FA" />
+    <SolidColorBrush x:Key="TextMuted" Color="#8F9BB3" />
+    <SolidColorBrush x:Key="AccentBlue" Color="#3B82F6" />
+    <SolidColorBrush x:Key="AccentBlueHover" Color="#2563EB" />
+    <SolidColorBrush x:Key="AccentGreen" Color="#10B981" />
+    <SolidColorBrush x:Key="AccentYellow" Color="#F59E0B" />
+    <SolidColorBrush x:Key="AccentRed" Color="#EF4444" />
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+
+    <Style Selector="Window">
+      <Setter Property="Background" Value="{StaticResource BgPrimary}" />
+      <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+      <Setter Property="FontFamily" Value="Inter, Segoe UI, Noto Sans, sans-serif" />
+    </Style>
+
+    <Style Selector="Border.card">
+      <Setter Property="Background" Value="{StaticResource BgCard}" />
+      <Setter Property="BorderBrush" Value="{StaticResource BorderSubtle}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Padding" Value="18" />
+    </Style>
+
+    <Style Selector="Button">
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="14,8" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+
+    <Style Selector="Button.primary">
+      <Setter Property="Background" Value="{StaticResource AccentBlue}" />
+      <Setter Property="Foreground" Value="#FFFFFF" />
+    </Style>
+    <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource AccentBlueHover}" />
+    </Style>
+
+    <Style Selector="Button.success">
+      <Setter Property="Background" Value="#059669" />
+      <Setter Property="Foreground" Value="#FFFFFF" />
+    </Style>
+    <Style Selector="Button.success:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#047857" />
+    </Style>
+
+    <Style Selector="Button.danger">
+      <Setter Property="Background" Value="#DC2626" />
+      <Setter Property="Foreground" Value="#FFFFFF" />
+    </Style>
+    <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#B91C1C" />
+    </Style>
+
+    <Style Selector="Button.nav">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{StaticResource TextMuted}" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Left" />
+      <Setter Property="Padding" Value="14,10" />
+      <Setter Property="CornerRadius" Value="8" />
+    </Style>
+    <Style Selector="Button.nav:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource BgElevated}" />
+    </Style>
+    <Style Selector="Button.nav.active">
+      <Setter Property="Background" Value="{StaticResource BgElevated}" />
+      <Setter Property="Foreground" Value="{StaticResource TextPrimary}" />
+    </Style>
+  </Application.Styles>
+
+</Application>
