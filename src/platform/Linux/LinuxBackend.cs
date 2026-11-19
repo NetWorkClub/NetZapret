@@ -311,6 +311,11 @@ public sealed class LinuxBackend : IPlatformBackend, ISessionPlatformBackend
         if (nfqueueProc)
             items.Add(new DiagnosticItem("Модуль ядра nfnetlink_queue", "Активен", DiagnosticSeverity.Ok));
 
+        items.Add(new DiagnosticItem(
+            "QUIC (HTTP/3) и YouTube",
+            "В правила десинхронизации включен список google. Если видео на YouTube стартует с задержкой, отключите QUIC в браузере (chrome://flags/#enable-quic -> Disabled) для мгновенного перехода на TCP.",
+            DiagnosticSeverity.Ok));
+
         return items;
     }
 
@@ -328,7 +333,7 @@ public sealed class LinuxBackend : IPlatformBackend, ISessionPlatformBackend
     public async Task<(bool Success, string Message)> UpdateHostsAsync(string remoteHostsContent, CancellationToken ct = default)
     {
         var current = File.Exists(HostsFilePath)
-            ? await File.ReadAllTextAsync(HostsFilePath, Encoding.UTF8, ct)
+            ? await File.ReadAllTextAsync(HostsFilePath, ct)
             : string.Empty;
 
         if (!ListManager.IsHostsUpdateNeeded(current, remoteHostsContent))
@@ -339,7 +344,7 @@ public sealed class LinuxBackend : IPlatformBackend, ISessionPlatformBackend
 
         try
         {
-            await File.WriteAllTextAsync(tempFile, updated, Encoding.UTF8, ct);
+            await File.WriteAllTextAsync(tempFile, updated, new UTF8Encoding(false), ct);
             var daemonPath = FindDaemonPath();
             if (daemonPath is null)
                 return (false, "Не найден исполняемый файл NetZapret.Daemon.");
@@ -443,6 +448,15 @@ public sealed class LinuxBackend : IPlatformBackend, ISessionPlatformBackend
         var besideUi = Path.Combine(baseDir, "NetZapret.Daemon");
         if (File.Exists(besideUi))
             return besideUi;
+
+        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        var standaloneDaemon = Path.Combine(home, ".local", "share", "netzapret", "NetZapret.Daemon");
+        if (File.Exists(standaloneDaemon))
+            return standaloneDaemon;
+
+        var systemDaemon = "/usr/local/bin/NetZapret.Daemon";
+        if (File.Exists(systemDaemon))
+            return systemDaemon;
 
         var devDebug = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "..", "daemon", "bin", "Debug", "net8.0", "NetZapret.Daemon"));
         if (File.Exists(devDebug))

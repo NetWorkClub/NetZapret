@@ -13,7 +13,7 @@ public sealed record UpdateCheckResult(
 
 public static class UpdateService
 {
-    public const string AppVersion = "1.0.0";
+    public const string AppVersion = "1.0.1";
     public const string DefaultLocalVersion = "1.10.4";
     public const string ReleasesLatestUrl = "https://github.com/Flowseal/zapret-discord-youtube/releases/latest";
     public const string ReleaseTagPrefix = "https://github.com/Flowseal/zapret-discord-youtube/releases/tag/";

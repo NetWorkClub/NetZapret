@@ -12,7 +12,8 @@
           <TextBlock Text="Обслуживание и настройки" FontSize="18" FontWeight="Bold" />
           <TextBlock Text="{Binding UpdateStatusText}" FontSize="13" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
           <CheckBox Content="Проверять актуальность базы списков при запуске" IsChecked="{Binding AutoCheckUpdates}" />
-          <CheckBox Content="Запускать свёрнутым в трей и сворачивать при закрытии окна" IsChecked="{Binding StartMinimized}" />
+          <CheckBox Content="Сворачивать в трей при закрытии окна (работа в фоне)" IsChecked="{Binding CloseToTray}" />
+          <CheckBox Content="Запускать свёрнутым в трей" IsChecked="{Binding StartMinimized}" />
         </StackPanel>
 
         <StackPanel Grid.Column="1" Spacing="8" MinWidth="220">

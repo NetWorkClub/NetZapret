@@ -124,12 +124,19 @@ public static partial class BenchmarkEngine
             new TargetItem("DiscordMain", "https://discord.com", "discord.com"),
             new TargetItem("DiscordGateway", "https://gateway.discord.gg", "gateway.discord.gg"),
             new TargetItem("DiscordCDN", "https://cdn.discordapp.com", "cdn.discordapp.com"),
+            new TargetItem("DiscordUpdates", "https://updates.discord.com", "updates.discord.com"),
             new TargetItem("YouTubeWeb", "https://www.youtube.com", "www.youtube.com"),
+            new TargetItem("YouTubeShort", "https://youtu.be", "youtu.be"),
+            new TargetItem("YouTubeImage", "https://i.ytimg.com", "i.ytimg.com"),
             new TargetItem("YouTubeVideoRedirect", "https://redirector.googlevideo.com", "redirector.googlevideo.com"),
             new TargetItem("GoogleMain", "https://www.google.com", "www.google.com"),
+            new TargetItem("GoogleGstatic", "https://www.gstatic.com", "www.gstatic.com"),
             new TargetItem("CloudflareWeb", "https://www.cloudflare.com", "www.cloudflare.com"),
+            new TargetItem("CloudflareCDN", "https://cdnjs.cloudflare.com", "cdnjs.cloudflare.com"),
             new TargetItem("CloudflareDNS1111", null, "1.1.1.1"),
-            new TargetItem("GoogleDNS8888", null, "8.8.8.8")
+            new TargetItem("CloudflareDNS1001", null, "1.0.0.1"),
+            new TargetItem("GoogleDNS8888", null, "8.8.8.8"),
+            new TargetItem("GoogleDNS8844", null, "8.8.4.4")
         ];
     }
 
@@ -195,8 +202,6 @@ public static partial class BenchmarkEngine
                 var pingTask = PingAsync(target.PingHost, 1000);
                 Task<ProbeResult[]> probesTask = target.Url is not null
                     ? Task.WhenAll(
-                        ProbeUrlAsync(target.Url, ProbeType.Http11, timeout, ct),
-                        ProbeUrlAsync(target.Url, ProbeType.Tls12, timeout, ct),
                         ProbeUrlAsync(target.Url, ProbeType.Tls13, timeout, ct))
                     : Task.FromResult(Array.Empty<ProbeResult>());
 
@@ -348,6 +353,8 @@ public static partial class BenchmarkEngine
         try
         {
             using var req = new HttpRequestMessage(HttpMethod.Head, url);
+            req.Headers.TryAddWithoutValidation("User-Agent", "curl/8.4.0");
+
             if (probe == ProbeType.Http11)
             {
                 req.Version = HttpVersion.Version11;

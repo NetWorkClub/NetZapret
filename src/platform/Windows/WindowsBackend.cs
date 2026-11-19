@@ -284,6 +284,11 @@ public sealed class WindowsBackend : IPlatformBackend
         CheckConflicts(items, allServicesTask.Result.Output);
         CheckHosts(items);
 
+        items.Add(new DiagnosticItem(
+            "QUIC (HTTP/3) и YouTube",
+            "В правила десинхронизации включен список google. Если видео на YouTube стартует с задержкой, отключите QUIC в браузере (chrome://flags/#enable-quic -> Disabled) для мгновенного перехода на TCP.",
+            DiagnosticSeverity.Ok));
+
         var winwsRunning = Process.GetProcessesByName("winws").Length > 0;
         if (!winwsRunning && divStateTask.Result is "RUNNING" or "STOP_PENDING")
         {

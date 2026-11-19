@@ -4,8 +4,13 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Version>1.0.1</Version>
     <RootNamespace>NetZapret.Core</RootNamespace>
     <AssemblyName>NetZapret.Core</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\assets\**" LogicalName="NetZapretAsset:%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
 
 </Project>

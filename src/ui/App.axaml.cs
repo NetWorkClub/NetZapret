@@ -59,7 +59,7 @@ public partial class App : Application
                 if (_isShuttingDown)
                     return;
 
-                if (_mainVm.StartMinimized)
+                if (_mainVm.CloseToTray || _mainVm.IsBypassRunning)
                 {
                     e.Cancel = true;
                     _mainWindow.Hide();

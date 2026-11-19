@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=NetZapret
+Comment=NetZapret DPI Bypass GUI
+Exec=sh -c '"$(dirname "%k")/start.sh"'
+Icon=network-vpn
+Terminal=false
+Type=Application
+Categories=Network;Utility;

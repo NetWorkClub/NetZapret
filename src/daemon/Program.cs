@@ -6,6 +6,8 @@ namespace NetZapret.Daemon;
 
 public static class Program
 {
+    private static readonly UTF8Encoding Utf8NoBom = new(false);
+
     private const string NftTableName = "netzapret";
     private const string PidFilePath = "/run/netzapret.pid";
     private const string RuntimeNftPath = "/run/netzapret.nft";
@@ -133,8 +135,8 @@ public static class Program
         var nftBin = FindBinary("nft") ?? "/usr/sbin/nft";
         Directory.CreateDirectory(ConfigDir);
 
-        await File.WriteAllTextAsync(SavedNftPath, BuildNftScript(tcp, udp, qnum), Encoding.UTF8);
-        await File.WriteAllTextAsync(SavedStrategyPath, strategyName, Encoding.UTF8);
+        await File.WriteAllTextAsync(SavedNftPath, BuildNftScript(tcp, udp, qnum), Utf8NoBom);
+        await File.WriteAllTextAsync(SavedStrategyPath, strategyName, Utf8NoBom);
 
         var execStartArgs = string.Join(' ', nfqwsArgs.Select(SystemdEscape));
         var unit = new StringBuilder()
@@ -156,7 +158,7 @@ public static class Program
             .AppendLine("WantedBy=multi-user.target")
             .ToString();
 
-        await File.WriteAllTextAsync(SystemdUnitPath, unit, Encoding.UTF8);
+        await File.WriteAllTextAsync(SystemdUnitPath, unit, Utf8NoBom);
 
         await RunProcessAsync("systemctl", ["daemon-reload"]);
         var enable = await RunProcessAsync("systemctl", ["enable", "--now", "netzapret.service"]);
@@ -202,7 +204,7 @@ public static class Program
         if (File.Exists(HostsPath))
             File.Copy(HostsPath, HostsPath + ".netzapret.bak", overwrite: true);
 
-        await File.WriteAllTextAsync(HostsPath, updated, Encoding.UTF8);
+        await File.WriteAllTextAsync(HostsPath, updated, Utf8NoBom);
         Console.WriteLine("OK");
         return 0;
     }
@@ -225,7 +227,7 @@ public static class Program
         if (nftBin is null)
             return (false, "Утилита nft (nftables) не найдена.");
 
-        await File.WriteAllTextAsync(RuntimeNftPath, BuildNftScript(tcpPorts, udpPorts, qnum), Encoding.UTF8);
+        await File.WriteAllTextAsync(RuntimeNftPath, BuildNftScript(tcpPorts, udpPorts, qnum), Utf8NoBom);
         var nftRes = await RunProcessAsync(nftBin, ["-f", RuntimeNftPath]);
         if (nftRes.ExitCode != 0)
             return (false, $"Ошибка применения nftables: {nftRes.Output}");
@@ -341,6 +343,8 @@ public static class Program
         var mergedUdp = MergePortRanges(udpPorts);
 
         var sb = new StringBuilder();
+        sb.AppendLine($"add table inet {NftTableName}");
+        sb.AppendLine($"flush table inet {NftTableName}");
         sb.AppendLine($"table inet {NftTableName} {{");
         sb.AppendLine("    chain postrouting {");
         sb.AppendLine("        type filter hook postrouting priority mangle; policy accept;");

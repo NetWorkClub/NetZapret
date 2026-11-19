@@ -7,6 +7,10 @@
     <Nullable>enable</Nullable>
     <RootNamespace>NetZapret.Daemon</RootNamespace>
     <AssemblyName>NetZapret.Daemon</AssemblyName>
+    <Version>1.0.1</Version>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -193,6 +193,9 @@ public sealed partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private bool _startMinimized;
 
+    [ObservableProperty]
+    private bool _closeToTray = true;
+
     public string AppVersionText => UpdateService.AppVersion;
 
     public bool IsDashboardTab => SelectedTabIndex == 0;
@@ -246,6 +249,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase
             GameUdpPorts = _appSettings.GameUdpPorts;
             AutoCheckUpdates = _appSettings.AutoCheckUpdates;
             StartMinimized = _appSettings.StartMinimized;
+            CloseToTray = _appSettings.CloseToTray;
             CurrentVersionText = UpdateService.GetLocalVersion(_assetsPath);
 
             LoadTestTargets();
@@ -319,6 +323,13 @@ public sealed partial class MainWindowViewModel : ViewModelBase
     {
         if (_isInitializing) return;
         _appSettings.StartMinimized = value;
+        _ = StrategyStore.SaveSettingsAsync(_assetsPath, _appSettings);
+    }
+
+    partial void OnCloseToTrayChanged(bool value)
+    {
+        if (_isInitializing) return;
+        _appSettings.CloseToTray = value;
         _ = StrategyStore.SaveSettingsAsync(_assetsPath, _appSettings);
     }
 

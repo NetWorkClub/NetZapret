@@ -24,6 +24,9 @@ public sealed class AppSettings
     [JsonPropertyName("startMinimized")]
     public bool StartMinimized { get; set; }
 
+    [JsonPropertyName("closeToTray")]
+    public bool CloseToTray { get; set; } = true;
+
     [JsonPropertyName("useServiceMode")]
     public bool UseServiceMode { get; set; }
 }

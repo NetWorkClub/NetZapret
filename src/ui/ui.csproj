@@ -9,7 +9,11 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <RootNamespace>NetZapret.UI</RootNamespace>
     <AssemblyName>NetZapret</AssemblyName>
+    <Version>1.0.1</Version>
     <ApplicationIcon>Assets\zapret.ico</ApplicationIcon>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -46,6 +50,7 @@
       <_DaemonPublishArgs>-c $(Configuration)</_DaemonPublishArgs>
       <_DaemonPublishArgs Condition="'$(RuntimeIdentifier)' != ''">$(_DaemonPublishArgs) -r $(RuntimeIdentifier)</_DaemonPublishArgs>
       <_DaemonPublishArgs Condition="'$(RuntimeIdentifier)' != '' And '$(SelfContained)' != ''">$(_DaemonPublishArgs) --self-contained $(SelfContained)</_DaemonPublishArgs>
+      <_DaemonPublishArgs Condition="'$(PublishSingleFile)' != ''">$(_DaemonPublishArgs) -p:PublishSingleFile=$(PublishSingleFile) -p:IncludeNativeLibrariesForSelfExtract=true</_DaemonPublishArgs>
       <_DaemonPublishArgs Condition="'$(Version)' != ''">$(_DaemonPublishArgs) -p:Version=&quot;$(Version)&quot;</_DaemonPublishArgs>
       <_DaemonPublishArgs Condition="'$(DebugType)' != ''">$(_DaemonPublishArgs) -p:DebugType=$(DebugType)</_DaemonPublishArgs>
       <_DaemonPublishArgs Condition="'$(DebugSymbols)' != ''">$(_DaemonPublishArgs) -p:DebugSymbols=$(DebugSymbols)</_DaemonPublishArgs>

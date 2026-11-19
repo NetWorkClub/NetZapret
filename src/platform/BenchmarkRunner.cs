@@ -109,7 +109,7 @@ public static class BenchmarkRunner
                     continue;
                 }
 
-                await Task.Delay(350, ct);
+                await Task.Delay(600, ct);
 
                 progress?.Report(new BenchmarkProgress(
                     step, strategies.Count, strategy.Id, strategy.Name,

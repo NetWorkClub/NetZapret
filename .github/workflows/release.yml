@@ -33,20 +33,25 @@ jobs:
           $ver = $env:RELEASE_TAG.TrimStart('v')
           if ([string]::IsNullOrWhiteSpace($ver)) { $ver = "1.0.0" }
           $outDir = "${{ github.workspace }}/dist/NetZapret-win-x64"
-          dotnet publish src/ui/ui.csproj -c Release -r win-x64 --self-contained true -p:Version=$ver -p:DebugType=None -p:DebugSymbols=false -o $outDir
+          dotnet publish src/ui/ui.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:Version=$ver -p:DebugType=None -p:DebugSymbols=false -o $outDir
+          if (Test-Path "$outDir/assets/scripts/run-netzapret.bat") {
+            Copy-Item "$outDir/assets/scripts/run-netzapret.bat" "$outDir/Запустить NetZapret.bat" -Force
+          }
+          Remove-Item "$outDir/assets/scripts" -Recurse -Force -ErrorAction SilentlyContinue
           Remove-Item "$outDir/assets/bin/linux" -Recurse -Force -ErrorAction SilentlyContinue
           Remove-Item "$outDir/assets/results" -Recurse -Force -ErrorAction SilentlyContinue
           Remove-Item "$outDir/assets/last-benchmark.json" -Force -ErrorAction SilentlyContinue
           Remove-Item "$outDir/assets/settings.json" -Force -ErrorAction SilentlyContinue
           Get-ChildItem "$outDir" -Filter "*.pdb" -Recurse | Remove-Item -Force
           New-Item -ItemType Directory -Path "${{ github.workspace }}/artifacts" -Force | Out-Null
+          Copy-Item "$outDir/NetZapret.exe" "${{ github.workspace }}/artifacts/NetZapret.exe" -Force
           Compress-Archive -Path "$outDir/*" -DestinationPath "${{ github.workspace }}/artifacts/NetZapret-$($env:RELEASE_TAG)-win-x64.zip" -Force
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-win-x64
-          path: artifacts/*.zip
+          path: artifacts/*
 
   build-linux:
     runs-on: ubuntu-latest
@@ -67,20 +72,28 @@ jobs:
           VER="${RELEASE_TAG#v}"
           if [ -z "$VER" ]; then VER="1.0.0"; fi
           OUT_DIR="${{ github.workspace }}/dist/NetZapret-linux-x64"
-          dotnet publish src/ui/ui.csproj -c Release -r linux-x64 --self-contained true -p:Version="$VER" -p:DebugType=None -p:DebugSymbols=false -o "$OUT_DIR"
-          rm -rf "$OUT_DIR/assets/bin/win" "$OUT_DIR/assets/results" "$OUT_DIR/assets/last-benchmark.json" "$OUT_DIR/assets/settings.json"
+          dotnet publish src/ui/ui.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:Version="$VER" -p:DebugType=None -p:DebugSymbols=false -o "$OUT_DIR"
+          if [ -f "$OUT_DIR/assets/scripts/start.sh" ]; then
+            cp "$OUT_DIR/assets/scripts/start.sh" "$OUT_DIR/start.sh"
+            chmod +x "$OUT_DIR/start.sh"
+          fi
+          if [ -f "$OUT_DIR/assets/scripts/netzapret.desktop" ]; then
+            cp "$OUT_DIR/assets/scripts/netzapret.desktop" "$OUT_DIR/netzapret.desktop"
+          fi
+          rm -rf "$OUT_DIR/assets/scripts" "$OUT_DIR/assets/bin/win" "$OUT_DIR/assets/results" "$OUT_DIR/assets/last-benchmark.json" "$OUT_DIR/assets/settings.json"
           find "$OUT_DIR" -name "*.pdb" -delete
           chmod +x "$OUT_DIR/NetZapret"
           if [ -f "$OUT_DIR/NetZapret.Daemon" ]; then chmod +x "$OUT_DIR/NetZapret.Daemon"; fi
           if [ -f "$OUT_DIR/assets/bin/linux/nfqws" ]; then chmod +x "$OUT_DIR/assets/bin/linux/nfqws"; fi
           mkdir -p "${{ github.workspace }}/artifacts"
+          cp "$OUT_DIR/NetZapret" "${{ github.workspace }}/artifacts/NetZapret-linux-x64"
           tar --owner=0 --group=0 -czf "${{ github.workspace }}/artifacts/NetZapret-${RELEASE_TAG}-linux-x64.tar.gz" -C "${{ github.workspace }}/dist" "NetZapret-linux-x64"
 
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
           name: release-linux-x64
-          path: artifacts/*.tar.gz
+          path: artifacts/*
 
   release:
     needs: [build-windows, build-linux]

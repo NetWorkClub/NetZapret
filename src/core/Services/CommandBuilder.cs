@@ -70,7 +70,8 @@ public static class CommandBuilder
         {
             qUseL7 ? "--filter-l7=quic" : "--filter-udp=443",
             $"--hostlist={listsDir}list-general.txt",
-            $"--hostlist={listsDir}list-general-user.txt"
+            $"--hostlist={listsDir}list-general-user.txt",
+            $"--hostlist={listsDir}list-google.txt"
         };
         quicBlock.AddRange(CommonExcludes());
         quicBlock.AddRange([

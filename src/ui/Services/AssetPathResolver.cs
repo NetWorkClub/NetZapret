@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using NetZapret.Core.Services;
 
 namespace NetZapret.UI.Services;
 
@@ -6,28 +7,57 @@ public static class AssetPathResolver
 {
     public static string ResolveAssetsPath()
     {
-        var candidates = new List<string>
-        {
-            Path.Combine(AppContext.BaseDirectory, "assets")
-        };
+        var exeDir = AppContext.BaseDirectory;
+        var localAssets = Path.Combine(exeDir, "assets");
+        if (Directory.Exists(localAssets) && File.Exists(Path.Combine(localAssets, "strategies.json")))
+            return Path.GetFullPath(localAssets);
 
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        var dir = new DirectoryInfo(exeDir);
         for (var i = 0; i < 6 && dir is not null; i++)
         {
-            candidates.Add(Path.Combine(dir.FullName, "assets"));
+            var devAssets = Path.Combine(dir.FullName, "assets");
+            if (Directory.Exists(devAssets) && File.Exists(Path.Combine(devAssets, "strategies.json")))
+                return Path.GetFullPath(devAssets);
             dir = dir.Parent;
         }
 
-        var cwd = Directory.GetCurrentDirectory();
-        candidates.Add(Path.Combine(cwd, "assets"));
-
-        foreach (var path in candidates)
+        string standaloneDir;
+        if (OperatingSystem.IsWindows())
         {
-            if (File.Exists(Path.Combine(path, "strategies.json")))
-                return Path.GetFullPath(path);
+            var common = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+            if (!string.IsNullOrEmpty(common) && CanWriteToDirectory(common))
+            {
+                standaloneDir = Path.Combine(common, "NetZapret", "assets");
+            }
+            else
+            {
+                var local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                standaloneDir = Path.Combine(local, "NetZapret", "assets");
+            }
+        }
+        else
+        {
+            var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            standaloneDir = Path.Combine(home, ".local", "share", "netzapret", "assets");
         }
 
-        return Path.GetFullPath(candidates[0]);
+        EmbeddedAssetsExtractor.ExtractAssetsIfNeeded(standaloneDir);
+        return Path.GetFullPath(standaloneDir);
+    }
+
+    private static bool CanWriteToDirectory(string dir)
+    {
+        try
+        {
+            var testDir = Path.Combine(dir, $"NetZapret_perm_{Guid.NewGuid():N}");
+            Directory.CreateDirectory(testDir);
+            Directory.Delete(testDir);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public static void OpenUrl(string url)
