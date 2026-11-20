@@ -5,177 +5,218 @@
              x:DataType="vm:MainWindowViewModel">
 
   <Grid RowDefinitions="Auto,Auto,*" RowSpacing="12">
-    <Border Grid.Row="0" Classes="card">
+    
+    <!-- ================= TOP HERO BENCHMARK CARD ================= -->
+    <Border Grid.Row="0" Classes="card-hero">
       <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="12">
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
-          <StackPanel Grid.Column="0" Spacing="4">
-            <TextBlock Text="Тестирование и подбор стратегии" FontSize="18" FontWeight="Bold" />
+        
+        <!-- Header & Action Row -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+          <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+            <TextBlock Text="Тестирование и автоподбор" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" />
             <TextBlock Text="{Binding BenchmarkStatusText}"
-                       FontSize="12"
+                       FontSize="11"
                        Foreground="{StaticResource TextMuted}"
                        TextWrapping="Wrap" />
           </StackPanel>
 
+          <!-- Mode Selector ComboBox -->
           <ComboBox Grid.Column="1"
                     SelectedIndex="{Binding SelectedBenchmarkModeIndex}"
                     IsEnabled="{Binding !IsBenchmarkRunning}"
                     VerticalAlignment="Center"
-                    Width="210">
+                    Width="200">
             <ComboBoxItem Content="Standard (HTTP/TLS + Ping)" />
             <ComboBoxItem Content="Quick (3 быстрые цели)" />
             <ComboBoxItem Content="DPI Checkers (TCP 16-20)" />
           </ComboBox>
 
-          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-            <Button Content="Запустить тест"
-                    Classes="primary"
+          <!-- Run / Cancel Actions -->
+          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+            <Button Classes="primary"
                     Command="{Binding RunBenchmarkCommand}"
-                    IsEnabled="{Binding !IsBenchmarkRunning}" />
-            <Button Content="Отмена"
-                    Classes="danger"
+                    IsEnabled="{Binding !IsBenchmarkRunning}"
+                    Padding="14,7">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6">
+                <PathIcon Grid.Column="0" Data="{StaticResource IconPlay}" Width="10" Height="10" Foreground="#000000" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="Запустить" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
+              </Grid>
+            </Button>
+
+            <Button Classes="danger"
                     Command="{Binding CancelBenchmarkCommand}"
-                    IsVisible="{Binding IsBenchmarkRunning}" />
+                    IsVisible="{Binding IsBenchmarkRunning}"
+                    Padding="14,7">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6">
+                <PathIcon Grid.Column="0" Data="{StaticResource IconStop}" Width="10" Height="10" Foreground="#F87171" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="Отмена" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
+              </Grid>
+            </Button>
           </StackPanel>
         </Grid>
 
+        <!-- Progress Bar (Slim 2px) -->
         <ProgressBar Grid.Row="1"
                      Minimum="0"
                      Maximum="100"
                      Value="{Binding BenchmarkProgressPercent}"
-                     Height="8" />
+                     Height="2" />
 
-        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+        <!-- Best Strategy Status & Actions -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8" VerticalAlignment="Center">
           <TextBlock Grid.Column="0"
                      Text="{Binding BestStrategySummary}"
-                     FontSize="13"
-                     FontWeight="SemiBold"
-                     Foreground="{StaticResource AccentGreen}"
-                     VerticalAlignment="Center" />
+                     FontSize="11"
+                     Foreground="{StaticResource TextSecondary}"
+                     VerticalAlignment="Center"
+                     TextTrimming="CharacterEllipsis" />
+
           <Button Grid.Column="1"
-                  Content="Настроить домены / IP"
+                  Content="Цели тестирования"
                   Command="{Binding OpenTargetsEditorCommand}"
-                  IsEnabled="{Binding !IsBenchmarkRunning}" />
+                  IsEnabled="{Binding !IsBenchmarkRunning}"
+                  FontSize="11"
+                  Padding="10,5" />
+
           <Button Grid.Column="2"
+                  Classes="primary"
                   Content="Применить лучшую"
-                  Classes="success"
                   Command="{Binding ApplyBestStrategyCommand}"
-                  IsVisible="{Binding HasBestStrategy}" />
+                  IsVisible="{Binding HasBestStrategy}"
+                  FontSize="11"
+                  Padding="10,5" />
+
           <Button Grid.Column="3"
                   Content="Открыть отчёт"
                   Command="{Binding OpenLastReportCommand}"
-                  IsVisible="{Binding HasLastReport}" />
+                  IsVisible="{Binding HasLastReport}"
+                  FontSize="11"
+                  Padding="10,5" />
         </Grid>
+
       </Grid>
     </Border>
 
-    <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+    <!-- ================= STRATEGIES & RESULTS HEADER ================= -->
+    <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" VerticalAlignment="Center">
       <TextBlock Grid.Column="0"
                  Text="Стратегии для проверки и результаты"
-                 FontSize="14"
+                 FontSize="13"
                  FontWeight="SemiBold"
+                 Foreground="{StaticResource TextPrimary}"
                  VerticalAlignment="Center" />
+
       <Button Grid.Column="1"
               Content="Выбрать все"
               Command="{Binding SelectAllStrategiesForTestCommand}"
               IsEnabled="{Binding !IsBenchmarkRunning}"
-              FontSize="12"
-              Padding="10,6" />
+              FontSize="11"
+              Padding="8,4" />
+
       <Button Grid.Column="2"
               Content="Снять все"
               Command="{Binding UnselectAllStrategiesForTestCommand}"
               IsEnabled="{Binding !IsBenchmarkRunning}"
-              FontSize="12"
-              Padding="10,6" />
+              FontSize="11"
+              Padding="8,4" />
     </Grid>
 
-    <Grid Grid.Row="2" ColumnDefinitions="260,*" ColumnSpacing="14">
-      <Border Grid.Column="0" Classes="card" Padding="10">
-        <ScrollViewer Padding="0,0,12,0">
+    <!-- ================= MAIN BENCHMARK WORKSPACE ================= -->
+    <Grid Grid.Row="2" ColumnDefinitions="240,*" ColumnSpacing="12">
+      
+      <!-- Left Column: Strategy Checklist -->
+      <Border Grid.Column="0" Classes="card" Padding="8">
+        <ScrollViewer Padding="0,0,6,0">
           <ItemsControl ItemsSource="{Binding Strategies}">
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="vm:StrategyItemVm">
                 <CheckBox IsChecked="{Binding IsSelectedForTest}"
                           Content="{Binding DisplayTitle}"
-                          Margin="2,4"
-                          FontSize="13" />
+                          Margin="2,2"
+                          FontSize="11" />
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
         </ScrollViewer>
       </Border>
 
-      <Border Grid.Column="1" Classes="card" Padding="12">
+      <!-- Right Column: Results Table -->
+      <Border Grid.Column="1" Classes="card" Padding="10">
         <Grid RowDefinitions="Auto,*">
+          
+          <!-- Table Header -->
           <Grid Grid.Row="0"
-                ColumnDefinitions="*,54,54,58,68,72,82,82"
-                Margin="4,0,18,8">
-            <Button Grid.Column="0" Content="Стратегия ⇅" Command="{Binding SortBenchmarkCommand}" CommandParameter="name" Background="Transparent" Padding="4,2" FontSize="12" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Left" />
-            <Button Grid.Column="1" Content="OK ⇅" Command="{Binding SortBenchmarkCommand}" CommandParameter="ok" Background="Transparent" Padding="2" FontSize="12" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
-            <Button Grid.Column="2" Content="ERR ⇅" Command="{Binding SortBenchmarkCommand}" CommandParameter="err" Background="Transparent" Padding="2" FontSize="12" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
-            <TextBlock Grid.Column="3" Text="UNSUP" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-            <Button Grid.Column="4" Content="BLOCK ⇅" Command="{Binding SortBenchmarkCommand}" CommandParameter="blocked" Background="Transparent" Padding="2" FontSize="12" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
-            <Button Grid.Column="5" Content="Пинг ⇅" Command="{Binding SortBenchmarkCommand}" CommandParameter="ping" Background="Transparent" Padding="2" FontSize="12" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
-            <Button Grid.Column="6" Content="Итог ⇅" Command="{Binding SortBenchmarkCommand}" CommandParameter="best" Background="Transparent" Padding="2" FontSize="12" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
+                ColumnDefinitions="*,50,50,55,60,65,75,75"
+                Margin="4,0,12,8">
+            <Button Grid.Column="0" Content="Стратегия ⇅" Command="{Binding SortBenchmarkCommand}" CommandParameter="name" Background="Transparent" BorderThickness="0" Padding="0" FontSize="11" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Left" />
+            <Button Grid.Column="1" Content="OK ⇅" Command="{Binding SortBenchmarkCommand}" CommandParameter="ok" Background="Transparent" BorderThickness="0" Padding="0" FontSize="11" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
+            <Button Grid.Column="2" Content="ERR ⇅" Command="{Binding SortBenchmarkCommand}" CommandParameter="err" Background="Transparent" BorderThickness="0" Padding="0" FontSize="11" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
+            <TextBlock Grid.Column="3" Text="UNSUP" FontSize="11" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Button Grid.Column="4" Content="BLOCK ⇅" Command="{Binding SortBenchmarkCommand}" CommandParameter="blocked" Background="Transparent" BorderThickness="0" Padding="0" FontSize="11" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
+            <Button Grid.Column="5" Content="Пинг ⇅" Command="{Binding SortBenchmarkCommand}" CommandParameter="ping" Background="Transparent" BorderThickness="0" Padding="0" FontSize="11" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
+            <Button Grid.Column="6" Content="Итог ⇅" Command="{Binding SortBenchmarkCommand}" CommandParameter="best" Background="Transparent" BorderThickness="0" Padding="0" FontSize="11" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" />
             <TextBlock Grid.Column="7" Text="" />
           </Grid>
 
-          <ScrollViewer Grid.Row="1" Padding="0,0,14,0">
+          <!-- Table Content Rows -->
+          <ScrollViewer Grid.Row="1" Padding="0,0,8,0">
             <ItemsControl ItemsSource="{Binding BenchmarkResults}">
               <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="vm:BenchmarkRowVm">
-                  <Border Background="{StaticResource BgElevated}"
+                  <Border Background="#101013"
                           BorderBrush="{StaticResource BorderSubtle}"
                           BorderThickness="1"
-                          CornerRadius="8"
-                          Padding="10,8"
-                          Margin="0,0,0,6">
-                    <StackPanel Spacing="8">
-                      <Grid ColumnDefinitions="*,54,54,58,68,72,82,82">
-                        <TextBlock Grid.Column="0" Text="{Binding StrategyName}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="1" Text="{Binding OkCount}" FontSize="13" Foreground="{StaticResource AccentGreen}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="2" Text="{Binding FailCount}" FontSize="13" Foreground="{StaticResource AccentRed}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="3" Text="{Binding UnsupportedCount}" FontSize="13" Foreground="{StaticResource AccentYellow}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="4" Text="{Binding BlockedCount}" FontSize="13" Foreground="{StaticResource AccentYellow}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="5" Text="{Binding AvgPingText}" FontSize="12" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        <TextBlock Grid.Column="6" Text="{Binding StatusBadge}" FontSize="12" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                          CornerRadius="6"
+                          Padding="8,6"
+                          Margin="0,0,0,4">
+                    <StackPanel Spacing="6">
+                      <Grid ColumnDefinitions="*,50,50,55,60,65,75,75">
+                        <TextBlock Grid.Column="0" Text="{Binding StrategyName}" FontSize="12" FontWeight="Medium" Foreground="{StaticResource TextPrimary}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" Text="{Binding OkCount}" FontSize="12" Foreground="{StaticResource AccentGreen}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="2" Text="{Binding FailCount}" FontSize="12" Foreground="{StaticResource AccentRed}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="3" Text="{Binding UnsupportedCount}" FontSize="12" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="4" Text="{Binding BlockedCount}" FontSize="12" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="5" Text="{Binding AvgPingText}" FontSize="11" Foreground="{StaticResource TextSecondary}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="6" Text="{Binding StatusBadge}" FontSize="11" Foreground="{StaticResource TextSecondary}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         <Button Grid.Column="7"
                                 Content="{Binding ExpandButtonText}"
                                 Command="{Binding ToggleExpandCommand}"
                                 IsVisible="{Binding HasDetails}"
-                                FontSize="11"
-                                Padding="8,4"
+                                FontSize="10"
+                                Padding="6,2"
                                 HorizontalAlignment="Right" />
                       </Grid>
 
-                      <StackPanel IsVisible="{Binding IsExpanded}" Spacing="6" Margin="4,4,4,0">
-                        <Border Background="#3B1219"
-                                BorderBrush="#991B1B"
+                      <!-- Expanded Details Section -->
+                      <StackPanel IsVisible="{Binding IsExpanded}" Spacing="4" Margin="2,2,2,0">
+                        <Border Background="#201113"
+                                BorderBrush="#4A181C"
                                 BorderThickness="1"
-                                CornerRadius="6"
-                                Padding="8,6"
+                                CornerRadius="4"
+                                Padding="8,4"
                                 IsVisible="{Binding HasError}">
-                          <TextBlock Text="{Binding Error}" FontSize="12" Foreground="#FCA5A5" TextWrapping="Wrap" />
+                          <TextBlock Text="{Binding Error}" FontSize="11" Foreground="#FCA5A5" TextWrapping="Wrap" />
                         </Border>
 
                         <ItemsControl ItemsSource="{Binding TargetDetails}">
                           <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="vm:BenchmarkTargetDetailVm">
-                              <Border Background="{StaticResource BgCard}"
+                              <Border Background="#141418"
                                       BorderBrush="{StaticResource BorderSubtle}"
                                       BorderThickness="1"
-                                      CornerRadius="6"
-                                      Padding="8,5"
-                                      Margin="0,0,0,4">
+                                      CornerRadius="4"
+                                      Padding="8,4"
+                                      Margin="0,0,0,2">
                                 <StackPanel Spacing="2">
-                                  <Grid ColumnDefinitions="170,90,90,90,*" ColumnSpacing="6">
-                                    <TextBlock Grid.Column="0" Text="{Binding TargetName}" FontSize="12" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
-                                    <TextBlock Grid.Column="1" Text="{Binding Http11Status, StringFormat='HTTP: {0}'}" FontSize="11" Foreground="{StaticResource TextMuted}" />
-                                    <TextBlock Grid.Column="2" Text="{Binding Tls12Status, StringFormat='TLS1.2: {0}'}" FontSize="11" Foreground="{StaticResource TextMuted}" />
-                                    <TextBlock Grid.Column="3" Text="{Binding Tls13Status, StringFormat='TLS1.3: {0}'}" FontSize="11" Foreground="{StaticResource TextMuted}" />
-                                    <TextBlock Grid.Column="4" Text="{Binding PingText, StringFormat='Ping: {0}'}" FontSize="11" Foreground="{StaticResource AccentBlue}" HorizontalAlignment="Right" />
+                                  <Grid ColumnDefinitions="160,85,85,85,*" ColumnSpacing="6">
+                                    <TextBlock Grid.Column="0" Text="{Binding TargetName}" FontSize="11" FontWeight="Medium" Foreground="{StaticResource TextPrimary}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Http11Status, StringFormat='HTTP: {0}'}" FontSize="10" Foreground="{StaticResource TextMuted}" />
+                                    <TextBlock Grid.Column="2" Text="{Binding Tls12Status, StringFormat='TLS1.2: {0}'}" FontSize="10" Foreground="{StaticResource TextMuted}" />
+                                    <TextBlock Grid.Column="3" Text="{Binding Tls13Status, StringFormat='TLS1.3: {0}'}" FontSize="10" Foreground="{StaticResource TextMuted}" />
+                                    <TextBlock Grid.Column="4" Text="{Binding PingText, StringFormat='Ping: {0}'}" FontSize="10" Foreground="{StaticResource TextSecondary}" HorizontalAlignment="Right" />
                                   </Grid>
                                   <TextBlock Text="{Binding ErrorHint}"
-                                             FontSize="11"
+                                             FontSize="10"
                                              Foreground="{StaticResource AccentRed}"
                                              TextWrapping="Wrap"
                                              IsVisible="{Binding ErrorHint, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
@@ -193,6 +234,7 @@
           </ScrollViewer>
         </Grid>
       </Border>
+
     </Grid>
   </Grid>
 </UserControl>

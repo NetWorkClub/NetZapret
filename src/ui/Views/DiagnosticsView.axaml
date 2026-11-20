@@ -5,96 +5,154 @@
              x:Name="DiagRoot"
              x:DataType="vm:MainWindowViewModel">
 
-  <Grid RowDefinitions="Auto,*" RowSpacing="14">
-    <Border Grid.Row="0" Classes="card">
-      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
-        <StackPanel Grid.Column="0" Spacing="8">
-          <TextBlock Text="Обслуживание и настройки" FontSize="18" FontWeight="Bold" />
-          <TextBlock Text="{Binding UpdateStatusText}" FontSize="13" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
-          <CheckBox Content="Проверять актуальность базы списков при запуске" IsChecked="{Binding AutoCheckUpdates}" />
-          <CheckBox Content="Сворачивать в трей при закрытии окна (работа в фоне)" IsChecked="{Binding CloseToTray}" />
-          <CheckBox Content="Запускать свёрнутым в трей" IsChecked="{Binding StartMinimized}" />
+  <Grid RowDefinitions="Auto,*" RowSpacing="12">
+    
+    <!-- ================= MAINTENANCE & PREFERENCES ================= -->
+    <Border Grid.Row="0" Classes="card-hero">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
+        
+        <!-- Left: Options & Preferences -->
+        <StackPanel Grid.Column="0" Spacing="10">
+          <TextBlock Text="Обслуживание и параметры" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" />
+
+          <TextBlock Text="{Binding UpdateStatusText}"
+                     FontSize="11"
+                     Foreground="{StaticResource TextMuted}"
+                     TextWrapping="Wrap" />
+
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="{Binding AppVersionText, StringFormat='Версия: v{0}'}"
+                       FontSize="11"
+                       Foreground="{StaticResource TextMuted}" />
+            <TextBlock Text="{Binding CurrentVersionText, StringFormat='База: {0}'}"
+                       FontSize="11"
+                       Foreground="{StaticResource TextMuted}" />
+          </StackPanel>
+
+          <StackPanel Spacing="6" Margin="0,2,0,0">
+            <CheckBox Content="Проверять актуальность базы списков при запуске"
+                      IsChecked="{Binding AutoCheckUpdates}" />
+            <CheckBox Content="Сворачивать в трей при закрытии окна (фоновый режим)"
+                      IsChecked="{Binding CloseToTray}" />
+            <CheckBox Content="Запускать приложение свёрнутым в системный трей"
+                      IsChecked="{Binding StartMinimized}" />
+          </StackPanel>
         </StackPanel>
 
-        <StackPanel Grid.Column="1" Spacing="8" MinWidth="220">
+        <!-- Right: Action Center Buttons -->
+        <StackPanel Grid.Column="1" Spacing="6" MinWidth="200" VerticalAlignment="Center">
           <Button Content="Проверить базу списков"
                   Command="{Binding CheckUpdatesCommand}"
                   HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Center" />
-          <Button Content="Обновить все списки"
-                  Classes="success"
+                  HorizontalContentAlignment="Center"
+                  FontSize="11"
+                  Padding="10,6" />
+
+          <Button Classes="primary"
+                  Content="Обновить все списки"
                   Command="{Binding UpdateAllListsCommand}"
                   IsEnabled="{Binding !IsBusy}"
                   HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Center" />
+                  HorizontalContentAlignment="Center"
+                  FontSize="11"
+                  Padding="10,6" />
+
           <Button Content="Changelog Flowseal (GitHub)"
                   Command="{Binding OpenUpdatePageCommand}"
                   IsVisible="{Binding IsUpdateAvailable}"
                   HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Center" />
+                  HorizontalContentAlignment="Center"
+                  FontSize="11"
+                  Padding="10,6" />
+
           <Button Content="Обновить файл hosts"
                   Command="{Binding UpdateHostsCommand}"
                   IsEnabled="{Binding !IsBusy}"
                   HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Center" />
+                  HorizontalContentAlignment="Center"
+                  FontSize="11"
+                  Padding="10,6" />
+
           <Button Content="Очистить кэш Discord"
                   Command="{Binding ClearDiscordCacheCommand}"
                   IsEnabled="{Binding !IsBusy}"
                   HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Center" />
-          <Button Content="Выйти из приложения"
-                  Classes="danger"
+                  HorizontalContentAlignment="Center"
+                  FontSize="11"
+                  Padding="10,6" />
+
+          <Button Classes="danger"
+                  Content="Выйти из NetZapret"
                   Command="{Binding ExitAppCommand}"
                   HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Center" />
+                  HorizontalContentAlignment="Center"
+                  FontSize="11"
+                  Padding="10,6" />
         </StackPanel>
+
       </Grid>
     </Border>
 
-    <Border Grid.Row="1" Classes="card">
+    <!-- ================= SYSTEM DIAGNOSTICS ================= -->
+    <Border Grid.Row="1" Classes="card" Padding="12">
       <Grid RowDefinitions="Auto,*" RowSpacing="10">
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
-          <TextBlock Grid.Column="0" Text="Диагностика системы" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
+        
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+          <TextBlock Grid.Column="0" Text="Диагностика системы" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center" />
+
           <Button Grid.Column="1"
-                  Content="Запустить диагностику"
                   Classes="primary"
+                  Content="Запустить диагностику"
                   Command="{Binding RunDiagnosticsCommand}"
-                  IsEnabled="{Binding !IsBusy}" />
+                  IsEnabled="{Binding !IsBusy}"
+                  FontSize="11"
+                  Padding="12,6" />
         </Grid>
 
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="1" Padding="0,0,6,0">
           <ItemsControl ItemsSource="{Binding DiagnosticItems}">
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="vm:DiagnosticItemVm">
-                <Border Background="{StaticResource BgElevated}"
+                <Border Background="#101013"
                         BorderBrush="{StaticResource BorderSubtle}"
                         BorderThickness="1"
-                        CornerRadius="8"
-                        Padding="12,10"
-                        Margin="0,0,0,8">
-                  <Grid ColumnDefinitions="85,*,Auto" ColumnSpacing="12">
+                        CornerRadius="6"
+                        Padding="10,8"
+                        Margin="0,0,0,4">
+                  <Grid ColumnDefinitions="80,*,Auto" ColumnSpacing="12">
+                    
+                    <!-- Severity Pill -->
                     <Border Grid.Column="0"
-                            Background="{StaticResource BgCard}"
-                            BorderBrush="{StaticResource BorderSubtle}"
-                            BorderThickness="1"
-                            CornerRadius="6"
-                            Padding="6,4"
+                            Classes="pill"
+                            Padding="6,3"
                             VerticalAlignment="Center">
                       <TextBlock Text="{Binding SeverityBadge}"
-                                 FontSize="11"
-                                 FontWeight="Bold"
+                                 FontSize="10"
+                                 FontWeight="SemiBold"
+                                 Foreground="{StaticResource TextSecondary}"
                                  HorizontalAlignment="Center" />
                     </Border>
+
+                    <!-- Title & Message -->
                     <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
-                      <TextBlock Text="{Binding Title}" FontSize="13" FontWeight="SemiBold" />
-                      <TextBlock Text="{Binding Message}" FontSize="12" Foreground="{StaticResource TextMuted}" TextWrapping="Wrap" />
+                      <TextBlock Text="{Binding Title}"
+                                 FontSize="12"
+                                 FontWeight="Medium"
+                                 Foreground="{StaticResource TextPrimary}" />
+                      <TextBlock Text="{Binding Message}"
+                                 FontSize="11"
+                                 Foreground="{StaticResource TextMuted}"
+                                 TextWrapping="Wrap" />
                     </StackPanel>
+
+                    <!-- Quick Fix / Action Button -->
                     <Button Grid.Column="2"
                             Content="{Binding ActionLabel}"
-                            Classes="primary"
                             IsVisible="{Binding HasAction}"
                             Command="{ReflectionBinding DataContext.ExecuteDiagnosticActionCommand, ElementName=DiagRoot}"
                             CommandParameter="{Binding}"
+                            FontSize="10"
+                            Padding="8,4"
                             VerticalAlignment="Center" />
                   </Grid>
                 </Border>
@@ -102,7 +160,9 @@
             </ItemsControl.ItemTemplate>
           </ItemsControl>
         </ScrollViewer>
+
       </Grid>
     </Border>
+
   </Grid>
 </UserControl>

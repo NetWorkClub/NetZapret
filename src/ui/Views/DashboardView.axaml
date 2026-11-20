@@ -5,143 +5,158 @@
              x:Name="DashRoot"
              x:DataType="vm:MainWindowViewModel">
 
-  <Grid RowDefinitions="Auto,Auto,*" RowSpacing="14">
-    <Border Grid.Row="0" Classes="card">
-      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
-        <StackPanel Grid.Column="0" Spacing="6" VerticalAlignment="Center">
-          <TextBlock Text="Управление обходом" FontSize="18" FontWeight="Bold" />
-          <TextBlock Text="{Binding SelectedStrategy.Name, FallbackValue='Стратегия не выбрана', StringFormat='Выбранная стратегия: {0}'}"
-                     FontSize="13"
+  <Grid RowDefinitions="Auto,Auto,*" RowSpacing="12">
+    
+    <!-- ================= TOP MASTER CONTROL CARD ================= -->
+    <Border Grid.Row="0" Classes="card-hero" MinHeight="100">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
+        
+        <!-- Left: Strategy Overview -->
+        <StackPanel Grid.Column="0" Spacing="4" VerticalAlignment="Center">
+          
+          <!-- Strategy Name Title -->
+          <TextBlock Text="{Binding SelectedStrategy.Name, FallbackValue='Выберите стратегию'}"
+                     FontSize="16"
+                     FontWeight="SemiBold"
                      Foreground="{StaticResource TextPrimary}" />
+
+          <!-- Strategy Description -->
           <TextBlock Text="{Binding SelectedStrategy.Description, FallbackValue=''}"
-                     FontSize="12"
-                     Foreground="{StaticResource TextMuted}"
-                     TextWrapping="Wrap" />
-          <Border Background="#3B2506"
-                  BorderBrush="#92400E"
-                  BorderThickness="1"
-                  CornerRadius="6"
-                  Padding="10,6"
-                  Margin="0,4,0,0"
-                  IsVisible="{Binding SelectedStrategy.AdvancedWarning, FallbackValue=False}">
-            <TextBlock Text="Внимание: глобальный режим затрагивает весь IPv4 TCP-трафик. Используйте, если остальные стратегии не помогли."
-                       FontSize="12"
-                       Foreground="#FCD34D"
-                       TextWrapping="Wrap" />
-          </Border>
+                     FontSize="11"
+                     Foreground="{StaticResource TextSecondary}"
+                     TextWrapping="Wrap"
+                     MaxLines="2"
+                     MinHeight="28" />
+
+          <!-- Global Warning (Subtle 1-line, no loud boxes) -->
+          <TextBlock Text="Внимание: глобальный режим затрагивает весь IPv4 TCP-трафик."
+                     FontSize="11"
+                     Foreground="#EAB308"
+                     IsVisible="{Binding SelectedStrategy.AdvancedWarning, FallbackValue=False}" />
         </StackPanel>
 
-        <StackPanel Grid.Column="1" Spacing="8" VerticalAlignment="Center" MinWidth="210">
-          <Button Content="{Binding ToggleBypassButtonText}"
-                  Classes.success="{Binding !IsBypassRunning}"
+        <!-- Right: Actions -->
+        <StackPanel Grid.Column="1" Spacing="6" VerticalAlignment="Center" MinWidth="180">
+          
+          <!-- Master Action Button -->
+          <Button Classes="hero-action"
+                  Classes.primary="{Binding !IsBypassRunning}"
                   Classes.danger="{Binding IsBypassRunning}"
                   Command="{Binding ToggleBypassCommand}"
                   IsEnabled="{Binding !IsBusy}"
                   HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Center"
-                  Padding="16,12"
-                  FontSize="14" />
-          <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                  HorizontalContentAlignment="Center">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" HorizontalAlignment="Center">
+              <PathIcon Grid.Column="0"
+                        Data="{StaticResource IconPower}"
+                        Width="12" Height="12"
+                        VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1"
+                         Text="{Binding ToggleBypassButtonText}"
+                         FontSize="12"
+                         FontWeight="SemiBold"
+                         VerticalAlignment="Center" />
+            </Grid>
+          </Button>
+
+          <!-- Service Actions Row -->
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="6">
             <Button Grid.Column="0"
-                    Content="Установить службу"
-                    Classes="primary"
+                    Content="Служба"
                     Command="{Binding InstallServiceCommand}"
                     IsEnabled="{Binding !IsBusy}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
-                    FontSize="12" />
+                    FontSize="11"
+                    Padding="8,5" />
+
             <Button Grid.Column="1"
-                    Content="Удалить службу"
+                    Content="Удалить"
                     Command="{Binding RemoveServiceCommand}"
                     IsEnabled="{Binding !IsBusy}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
-                    FontSize="12" />
+                    FontSize="11"
+                    Padding="8,5" />
           </Grid>
+
         </StackPanel>
       </Grid>
     </Border>
 
-    <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+    <!-- ================= STRATEGIES HEADER (Clean, no badges) ================= -->
+    <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6" VerticalAlignment="Center">
       <TextBlock Grid.Column="0"
-                 Text="Доступные стратегии (двойной клик — настройки и последний тест)"
-                 FontSize="14"
+                 Text="Стратегии"
+                 FontSize="13"
                  FontWeight="SemiBold"
+                 Foreground="{StaticResource TextPrimary}"
                  VerticalAlignment="Center" />
-      <TextBlock Grid.Column="1"
-                 Text="{Binding Strategies.Count, StringFormat='Всего: {0}'}"
-                 FontSize="12"
-                 Foreground="{StaticResource TextMuted}"
-                 VerticalAlignment="Center"
-                 Margin="0,0,8,0" />
-      <Button Grid.Column="2"
-              Content="+ Своя стратегия"
-              Classes="primary"
+
+      <Button Grid.Column="1"
+              Content="+ Своя"
               Command="{Binding OpenNewStrategyEditorCommand}"
-              FontSize="12"
-              Padding="12,6" />
-      <Button Grid.Column="3"
-              Content="Открыть / Настроить"
+              FontSize="11"
+              Padding="10,5" />
+
+      <Button Grid.Column="2"
+              Content="Параметры"
               Command="{Binding OpenStrategyDetailsCommand}"
               CommandParameter="{Binding SelectedStrategy}"
-              FontSize="12"
-              Padding="12,6" />
+              FontSize="11"
+              Padding="10,5" />
     </Grid>
 
-    <Border Grid.Row="2" Classes="card" Padding="8">
+    <!-- ================= STRATEGIES LIST (Zero slop, zero pill soup) ================= -->
+    <Border Grid.Row="2" Classes="card" Padding="4">
       <ListBox x:Name="StrategiesList"
                ItemsSource="{Binding Strategies}"
                SelectedItem="{Binding SelectedStrategy}"
                Background="Transparent">
         <ListBox.ItemTemplate>
           <DataTemplate x:DataType="vm:StrategyItemVm">
-            <Grid ColumnDefinitions="*,Auto" Margin="4,6" ColumnSpacing="12">
-              <StackPanel Grid.Column="0" Spacing="3">
-                <TextBlock Text="{Binding DisplayTitle}" FontWeight="SemiBold" FontSize="14" />
-                <TextBlock Text="{Binding Description}"
+            <Grid ColumnDefinitions="*,Auto" Margin="4,2" ColumnSpacing="16">
+              
+              <!-- Left: Title & Description -->
+              <StackPanel Grid.Column="0" Spacing="2" VerticalAlignment="Center">
+                <TextBlock Text="{Binding DisplayTitle}"
+                           FontWeight="Medium"
                            FontSize="12"
+                           Foreground="{StaticResource TextPrimary}" />
+                <TextBlock Text="{Binding Description}"
+                           FontSize="11"
                            Foreground="{StaticResource TextMuted}"
-                           TextWrapping="Wrap" />
+                           TextTrimming="CharacterEllipsis"
+                           TextWrapping="NoWrap" />
               </StackPanel>
-              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                <Border Background="#064E3B"
-                        BorderBrush="#059669"
-                        BorderThickness="1"
-                        CornerRadius="6"
-                        Padding="8,3"
-                        IsVisible="{Binding IsLastBest}">
-                  <TextBlock Text="Лучшая ★" FontSize="11" Foreground="#6EE7B7" FontWeight="SemiBold" />
-                </Border>
-                <Border Background="{StaticResource BgElevated}"
-                        BorderBrush="{StaticResource BorderSubtle}"
-                        BorderThickness="1"
-                        CornerRadius="6"
-                        Padding="8,3"
-                        IsVisible="{Binding HasLastBenchmark}">
-                  <TextBlock Text="{Binding LastBenchmarkSummary}" FontSize="11" Foreground="{StaticResource AccentGreen}" />
-                </Border>
-                <Border Background="{StaticResource BgElevated}"
-                        BorderBrush="{StaticResource BorderSubtle}"
-                        BorderThickness="1"
-                        CornerRadius="6"
-                        Padding="8,3">
-                  <TextBlock Text="{Binding Category}" FontSize="11" Foreground="{StaticResource TextMuted}" />
-                </Border>
-                <Border Background="#1E3A8A"
-                        CornerRadius="6"
-                        Padding="8,3">
-                  <TextBlock Text="{Binding LegacyLabel}" FontSize="11" Foreground="#BFDBFE" FontWeight="SemiBold" />
-                </Border>
-                <Button Content="Детали"
-                        FontSize="11"
-                        Padding="8,4"
-                        Command="{ReflectionBinding DataContext.OpenStrategyDetailsCommand, ElementName=DashRoot}"
-                        CommandParameter="{Binding}" />
+
+              <!-- Right: Clean Typography Meta (No pill borders!) -->
+              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <!-- Top Star (clean text, no badge box) -->
+                <TextBlock Text="★"
+                           FontSize="12"
+                           Foreground="{StaticResource AccentGreen}"
+                           IsVisible="{Binding IsLastBest}"
+                           VerticalAlignment="Center" />
+
+                <!-- Benchmark Latency (clean text) -->
+                <TextBlock Text="{Binding LastBenchmarkSummary}"
+                           FontSize="11"
+                           Foreground="{StaticResource TextSecondary}"
+                           IsVisible="{Binding HasLastBenchmark}"
+                           VerticalAlignment="Center" />
+
+                <!-- Category (clean muted text) -->
+                <TextBlock Text="{Binding Category}"
+                           FontSize="11"
+                           Foreground="{StaticResource TextMuted}"
+                           VerticalAlignment="Center" />
               </StackPanel>
             </Grid>
           </DataTemplate>
         </ListBox.ItemTemplate>
       </ListBox>
     </Border>
+
   </Grid>
 </UserControl>

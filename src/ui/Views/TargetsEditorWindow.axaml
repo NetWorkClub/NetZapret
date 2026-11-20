@@ -10,49 +10,82 @@
         MinWidth="600"
         MinHeight="440"
         WindowStartupLocation="CenterOwner"
-        Background="{StaticResource BgPrimary}">
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="36"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        Background="#09090B">
 
-  <Grid RowDefinitions="Auto,*,Auto" Margin="20" RowSpacing="14">
-    <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+  <Grid RowDefinitions="Auto,*,Auto" Margin="20,32,20,16" RowSpacing="12">
+    
+    <!-- Top Header Bar -->
+    <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8" VerticalAlignment="Center">
       <StackPanel Grid.Column="0" Spacing="2">
-        <TextBlock Text="Проверяемые домены и IP" FontSize="18" FontWeight="Bold" />
-        <TextBlock Text="Используются при стандартном и быстром тестировании стратегий" FontSize="12" Foreground="{StaticResource TextMuted}" />
+        <TextBlock Text="Проверяемые домены и IP" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" />
+        <TextBlock Text="Используются при стандартном и быстром тестировании стратегий" FontSize="11" Foreground="{StaticResource TextMuted}" />
       </StackPanel>
-      <Button Grid.Column="1" Content="Сбросить изменения" Command="{Binding ReloadTestTargetsCommand}" VerticalAlignment="Center" />
-      <Button Grid.Column="2" Content="Сохранить" Classes="success" Command="{Binding SaveTestTargetsCommand}" VerticalAlignment="Center" />
+
+      <Button Grid.Column="1"
+              Content="Сбросить"
+              Command="{Binding ReloadTestTargetsCommand}"
+              VerticalAlignment="Center"
+              FontSize="11"
+              Padding="10,5" />
+
+      <Button Grid.Column="2"
+              Classes="primary"
+              Content="Сохранить"
+              Command="{Binding SaveTestTargetsCommand}"
+              VerticalAlignment="Center"
+              FontSize="11"
+              Padding="12,5" />
     </Grid>
 
-    <Border Grid.Row="1" Classes="card" Padding="12">
-      <ScrollViewer Padding="0,0,14,0">
+    <!-- Targets List Card -->
+    <Border Grid.Row="1" Classes="card" Padding="10">
+      <ScrollViewer Padding="0,0,8,0">
         <ItemsControl ItemsSource="{Binding TestTargets}">
           <ItemsControl.ItemTemplate>
             <DataTemplate x:DataType="vm:TargetItemVm">
-              <Grid ColumnDefinitions="190,*,Auto" ColumnSpacing="10" Margin="0,0,0,8">
-                <TextBox Grid.Column="0" Text="{Binding Name}" Watermark="Название" FontSize="12" />
-                <TextBox Grid.Column="1" Text="{Binding Value}" Watermark="https://site.com или PING:1.1.1.1" FontSize="12" />
-                <Button Grid.Column="2"
-                        Content="Удалить"
-                        Classes="danger"
-                        Padding="12,6"
-                        FontSize="12"
-                        Command="{ReflectionBinding DataContext.RemoveTestTargetCommand, ElementName=TargetsWin}"
-                        CommandParameter="{Binding}" />
-              </Grid>
+              <Border Background="#101013"
+                      BorderBrush="{StaticResource BorderSubtle}"
+                      BorderThickness="1"
+                      CornerRadius="6"
+                      Padding="8,5"
+                      Margin="0,0,0,6">
+                <Grid ColumnDefinitions="180,*,Auto" ColumnSpacing="8">
+                  <TextBox Grid.Column="0" Text="{Binding Name}" Watermark="Название" FontSize="11" />
+                  <TextBox Grid.Column="1" Text="{Binding Value}" Watermark="https://site.com или PING:1.1.1.1" FontSize="11" />
+                  <Button Grid.Column="2"
+                          Content="Удалить"
+                          Classes="danger"
+                          Padding="8,5"
+                          FontSize="10"
+                          Command="{ReflectionBinding DataContext.RemoveTestTargetCommand, ElementName=TargetsWin}"
+                          CommandParameter="{Binding}" />
+                </Grid>
+              </Border>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
       </ScrollViewer>
     </Border>
 
-    <Border Grid.Row="2" Classes="card" Padding="14">
-      <StackPanel Spacing="10">
-        <TextBlock Text="Добавить новую цель" FontSize="14" FontWeight="SemiBold" />
-        <Grid ColumnDefinitions="190,*,Auto" ColumnSpacing="10">
-          <TextBox Grid.Column="0" Text="{Binding NewTargetName}" Watermark="Имя (напр. MySite)" FontSize="12" />
-          <TextBox Grid.Column="1" Text="{Binding NewTargetValue}" Watermark="https://example.com или PING:8.8.8.8" FontSize="12" />
-          <Button Grid.Column="2" Content="Добавить" Classes="primary" Command="{Binding AddTestTargetCommand}" Padding="16,8" />
+    <!-- Add New Target Card -->
+    <Border Grid.Row="2" Classes="card" Padding="12">
+      <StackPanel Spacing="8">
+        <TextBlock Text="Добавить цель" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" />
+        <Grid ColumnDefinitions="180,*,Auto" ColumnSpacing="8">
+          <TextBox Grid.Column="0" Text="{Binding NewTargetName}" Watermark="Имя (напр. Discord Voice)" FontSize="11" />
+          <TextBox Grid.Column="1" Text="{Binding NewTargetValue}" Watermark="https://example.com или PING:8.8.8.8" FontSize="11" />
+          <Button Grid.Column="2"
+                  Classes="primary"
+                  Content="Добавить"
+                  Command="{Binding AddTestTargetCommand}"
+                  FontSize="11"
+                  Padding="12,6" />
         </Grid>
       </StackPanel>
     </Border>
+
   </Grid>
 </Window>

@@ -4,78 +4,97 @@
              x:Class="NetZapret.UI.Views.FiltersView"
              x:DataType="vm:MainWindowViewModel">
 
-  <ScrollViewer>
-    <StackPanel Spacing="14">
-      <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+  <ScrollViewer Padding="0,0,8,0">
+    <StackPanel Spacing="12">
+      
+      <!-- Top Row: Game Filter & IPSet Filter -->
+      <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+        
+        <!-- Game Filter Card -->
         <Border Grid.Column="0" Classes="card">
           <StackPanel Spacing="10">
-            <TextBlock Text="Game Filter (игровой трафик)" FontSize="16" FontWeight="Bold" />
+            <TextBlock Text="Game Filter (Игровой трафик)" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" />
+
             <ComboBox SelectedIndex="{Binding SelectedGameFilterIndex}" HorizontalAlignment="Stretch">
               <ComboBoxItem Content="Отключён (порты 12)" />
               <ComboBoxItem Content="TCP и UDP" />
               <ComboBoxItem Content="Только TCP" />
               <ComboBoxItem Content="Только UDP" />
             </ComboBox>
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
               <StackPanel Grid.Column="0" Spacing="4">
-                <TextBlock Text="TCP порты" FontSize="12" Foreground="{StaticResource TextMuted}" />
+                <TextBlock Text="TCP порты" FontSize="11" Foreground="{StaticResource TextMuted}" />
                 <TextBox Text="{Binding GameTcpPorts}" />
               </StackPanel>
               <StackPanel Grid.Column="1" Spacing="4">
-                <TextBlock Text="UDP порты" FontSize="12" Foreground="{StaticResource TextMuted}" />
+                <TextBlock Text="UDP порты" FontSize="11" Foreground="{StaticResource TextMuted}" />
                 <TextBox Text="{Binding GameUdpPorts}" />
               </StackPanel>
             </Grid>
+
             <Button Content="Сохранить Game Filter"
-                    Classes="primary"
                     Command="{Binding SaveGameFilterCommand}"
-                    HorizontalAlignment="Left" />
+                    HorizontalAlignment="Left"
+                    FontSize="11"
+                    Padding="12,6" />
           </StackPanel>
         </Border>
 
+        <!-- IPSet Filter Card -->
         <Border Grid.Column="1" Classes="card">
           <StackPanel Spacing="10">
             <Grid ColumnDefinitions="*,Auto">
-              <TextBlock Grid.Column="0" Text="IPSet Filter и обновление списков" FontSize="16" FontWeight="Bold" />
-              <TextBlock Grid.Column="1"
-                         Text="{Binding IpsetModeText, StringFormat='Режим: {0}'}"
-                         FontSize="12"
-                         Foreground="{StaticResource AccentBlue}"
-                         VerticalAlignment="Center" />
+              <TextBlock Grid.Column="0" Text="IPSet Filter" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" />
+              <Border Grid.Column="1" Classes="pill" Padding="6,2">
+                <TextBlock Text="{Binding IpsetModeText, StringFormat='{}Режим: {0}'}"
+                           FontSize="10"
+                           Foreground="{StaticResource TextSecondary}" />
+              </Border>
             </Grid>
+
             <ComboBox SelectedIndex="{Binding SelectedIpsetIndex}" HorizontalAlignment="Stretch">
               <ComboBoxItem Content="Loaded (список IP)" />
               <ComboBoxItem Content="None (отключён)" />
               <ComboBoxItem Content="Any (весь трафик без списка)" />
             </ComboBox>
+
             <WrapPanel Orientation="Horizontal">
               <Button Content="Применить режим"
-                      Classes="primary"
                       Command="{Binding ApplyIpsetModeCommand}"
-                      Margin="0,0,8,6" />
+                      Margin="0,0,6,6"
+                      FontSize="11"
+                      Padding="10,5" />
               <Button Content="Обновить IPSet"
                       Command="{Binding UpdateIpsetFromRepoCommand}"
                       IsEnabled="{Binding !IsBusy}"
-                      Margin="0,0,8,6" />
+                      Margin="0,0,6,6"
+                      FontSize="11"
+                      Padding="10,5" />
               <Button Content="Обновить все списки"
-                      Classes="success"
+                      Classes="primary"
                       Command="{Binding UpdateAllListsCommand}"
                       IsEnabled="{Binding !IsBusy}"
-                      Margin="0,0,8,6" />
+                      Margin="0,0,6,6"
+                      FontSize="11"
+                      Padding="10,5" />
             </WrapPanel>
           </StackPanel>
         </Border>
+
       </Grid>
 
+      <!-- Middle: UDP Fakes Card -->
       <Border Classes="card">
         <StackPanel Spacing="10">
-          <TextBlock Text="Активные UDP-фейки (ACTIVE_DISCORD_UDP / ACTIVE_GAME_UDP)" FontSize="16" FontWeight="Bold" />
-          <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-            <StackPanel Grid.Column="0" Spacing="6">
-              <TextBlock Text="{Binding ActiveDiscordFakeName, StringFormat='Discord UDP сейчас: {0}'}"
-                         FontSize="12"
+          <TextBlock Text="Активные UDP-фейки" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}" />
+          
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+            <StackPanel Grid.Column="0" Spacing="4">
+              <TextBlock Text="{Binding ActiveDiscordFakeName, StringFormat='{}Discord UDP: {0}'}"
+                         FontSize="11"
                          Foreground="{StaticResource TextMuted}" />
-              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
                 <ComboBox Grid.Column="0"
                           ItemsSource="{Binding AvailableFakes}"
                           SelectedItem="{Binding SelectedDiscordFake}"
@@ -86,15 +105,19 @@
                     </DataTemplate>
                   </ComboBox.ItemTemplate>
                 </ComboBox>
-                <Button Grid.Column="1" Content="Применить" Command="{Binding ApplyDiscordFakeCommand}" />
+                <Button Grid.Column="1"
+                        Content="Применить"
+                        FontSize="11"
+                        Padding="10,6"
+                        Command="{Binding ApplyDiscordFakeCommand}" />
               </Grid>
             </StackPanel>
 
-            <StackPanel Grid.Column="1" Spacing="6">
-              <TextBlock Text="{Binding ActiveGameFakeName, StringFormat='Game UDP сейчас: {0}'}"
-                         FontSize="12"
+            <StackPanel Grid.Column="1" Spacing="4">
+              <TextBlock Text="{Binding ActiveGameFakeName, StringFormat='{}Game UDP: {0}'}"
+                         FontSize="11"
                          Foreground="{StaticResource TextMuted}" />
-              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
                 <ComboBox Grid.Column="0"
                           ItemsSource="{Binding AvailableFakes}"
                           SelectedItem="{Binding SelectedGameFake}"
@@ -105,38 +128,79 @@
                     </DataTemplate>
                   </ComboBox.ItemTemplate>
                 </ComboBox>
-                <Button Grid.Column="1" Content="Применить" Command="{Binding ApplyGameFakeCommand}" />
+                <Button Grid.Column="1"
+                        Content="Применить"
+                        FontSize="11"
+                        Padding="10,6"
+                        Command="{Binding ApplyGameFakeCommand}" />
               </Grid>
             </StackPanel>
           </Grid>
         </StackPanel>
       </Border>
 
+      <!-- Bottom: User Lists Editor Card -->
       <Border Classes="card">
         <StackPanel Spacing="10">
-          <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
-            <TextBlock Grid.Column="0" Text="Пользовательские списки" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" />
-            <Button Grid.Column="1" Content="Открыть папку assets" Command="{Binding OpenAssetsFolderCommand}" />
-            <Button Grid.Column="2" Content="Перечитать" Command="{Binding ReloadUserListsCommand}" />
-            <Button Grid.Column="3" Content="Сохранить списки" Classes="primary" Command="{Binding SaveUserListsCommand}" />
+          <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="6" VerticalAlignment="Center">
+            <TextBlock Grid.Column="0"
+                       Text="Пользовательские списки и исключения"
+                       FontSize="13"
+                       FontWeight="SemiBold"
+                       Foreground="{StaticResource TextPrimary}"
+                       VerticalAlignment="Center" />
+
+            <Button Grid.Column="1"
+                    Content="Папка assets"
+                    Command="{Binding OpenAssetsFolderCommand}"
+                    FontSize="11"
+                    Padding="8,5" />
+
+            <Button Grid.Column="2"
+                    Content="Перечитать"
+                    Command="{Binding ReloadUserListsCommand}"
+                    FontSize="11"
+                    Padding="8,5" />
+
+            <Button Grid.Column="3"
+                    Classes="primary"
+                    Content="Сохранить списки"
+                    Command="{Binding SaveUserListsCommand}"
+                    FontSize="11"
+                    Padding="10,5" />
           </Grid>
 
-          <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+          <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
             <StackPanel Grid.Column="0" Spacing="4">
-              <TextBlock Text="list-general-user.txt" FontSize="12" Foreground="{StaticResource TextMuted}" />
-              <TextBox Text="{Binding ListGeneralUserText}" AcceptsReturn="True" Height="150" FontFamily="Consolas, monospace" FontSize="12" />
+              <TextBlock Text="list-general-user.txt" FontSize="11" Foreground="{StaticResource TextMuted}" />
+              <TextBox Text="{Binding ListGeneralUserText}"
+                       AcceptsReturn="True"
+                       Height="140"
+                       FontFamily="Cascadia Code, Consolas, monospace"
+                       FontSize="11" />
             </StackPanel>
+
             <StackPanel Grid.Column="1" Spacing="4">
-              <TextBlock Text="list-exclude-user.txt" FontSize="12" Foreground="{StaticResource TextMuted}" />
-              <TextBox Text="{Binding ListExcludeUserText}" AcceptsReturn="True" Height="150" FontFamily="Consolas, monospace" FontSize="12" />
+              <TextBlock Text="list-exclude-user.txt" FontSize="11" Foreground="{StaticResource TextMuted}" />
+              <TextBox Text="{Binding ListExcludeUserText}"
+                       AcceptsReturn="True"
+                       Height="140"
+                       FontFamily="Cascadia Code, Consolas, monospace"
+                       FontSize="11" />
             </StackPanel>
+
             <StackPanel Grid.Column="2" Spacing="4">
-              <TextBlock Text="ipset-exclude-user.txt" FontSize="12" Foreground="{StaticResource TextMuted}" />
-              <TextBox Text="{Binding IpsetExcludeUserText}" AcceptsReturn="True" Height="150" FontFamily="Consolas, monospace" FontSize="12" />
+              <TextBlock Text="ipset-exclude-user.txt" FontSize="11" Foreground="{StaticResource TextMuted}" />
+              <TextBox Text="{Binding IpsetExcludeUserText}"
+                       AcceptsReturn="True"
+                       Height="140"
+                       FontFamily="Cascadia Code, Consolas, monospace"
+                       FontSize="11" />
             </StackPanel>
           </Grid>
         </StackPanel>
       </Border>
+
     </StackPanel>
   </ScrollViewer>
 </UserControl>

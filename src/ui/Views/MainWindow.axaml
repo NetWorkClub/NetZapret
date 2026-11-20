@@ -5,129 +5,160 @@
         x:Class="NetZapret.UI.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="NetZapret"
-        Width="1120"
-        Height="740"
-        MinWidth="900"
+        Width="1100"
+        Height="700"
+        MinWidth="920"
         MinHeight="600"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="36"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        Background="#09090B">
 
-  <Grid ColumnDefinitions="260,*">
+  <!-- Root Layout: Sidebar (Col 0) + Content (Col 1) -->
+  <Grid ColumnDefinitions="220,*">
+    
+    <!-- ================= SIDEBAR ================= -->
     <Border Grid.Column="0"
-            Background="{StaticResource BgSidebar}"
+            Background="#0D0D10"
             BorderBrush="{StaticResource BorderSubtle}"
             BorderThickness="0,0,1,0"
-            Padding="16,20">
+            Padding="14,32,14,14">
       <Grid RowDefinitions="Auto,Auto,*,Auto">
-        <StackPanel Grid.Row="0" Spacing="4" Margin="4,0,4,18">
-          <TextBlock Text="NetZapret" FontSize="22" FontWeight="Bold" />
-          <TextBlock Text="{Binding PlatformLabel}" FontSize="12" Foreground="{StaticResource TextMuted}" />
-        </StackPanel>
+        
+        <!-- App Title (Clean, no badges) -->
+        <TextBlock Grid.Row="0"
+                   Text="NetZapret"
+                   FontSize="15"
+                   FontWeight="SemiBold"
+                   Foreground="{StaticResource TextPrimary}"
+                   Margin="4,0,4,16" />
 
+        <!-- Status Indicator (1 clean line) -->
         <Border Grid.Row="1"
-                Background="{StaticResource BgCard}"
-                BorderBrush="{StaticResource BorderSubtle}"
-                BorderThickness="1"
-                CornerRadius="10"
-                Padding="12"
-                Margin="0,0,0,18">
-          <StackPanel Spacing="6">
-            <StackPanel Orientation="Horizontal" Spacing="8">
-              <Ellipse Width="10" Height="10" Fill="{StaticResource AccentGreen}" IsVisible="{Binding IsBypassRunning}" VerticalAlignment="Center" />
-              <Ellipse Width="10" Height="10" Fill="{StaticResource AccentRed}" IsVisible="{Binding !IsBypassRunning}" VerticalAlignment="Center" />
-              <TextBlock Text="{Binding StatusText}" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center" />
-            </StackPanel>
-            <TextBlock Text="{Binding ActiveServiceStrategyText}"
-                       FontSize="11"
-                       Foreground="{StaticResource TextMuted}"
-                       TextTrimming="CharacterEllipsis" />
-            <TextBlock Text="{Binding DriverStatusText, StringFormat='Драйвер: {0}'}"
-                       FontSize="11"
-                       Foreground="{StaticResource TextMuted}" />
+                Classes="card"
+                Padding="10,8"
+                Margin="0,0,0,16">
+          <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+            <Ellipse Width="6" Height="6"
+                     Fill="{StaticResource AccentGreen}"
+                     IsVisible="{Binding IsBypassRunning}"
+                     VerticalAlignment="Center" />
+            <Ellipse Width="6" Height="6"
+                     Fill="{StaticResource TextMuted}"
+                     IsVisible="{Binding !IsBypassRunning}"
+                     VerticalAlignment="Center" />
+            <TextBlock Text="{Binding StatusText}"
+                       FontWeight="Medium"
+                       FontSize="12"
+                       Foreground="{StaticResource TextPrimary}"
+                       VerticalAlignment="Center" />
           </StackPanel>
         </Border>
 
-        <StackPanel Grid.Row="2" Spacing="6">
+        <!-- Navigation Items (Linear Style) -->
+        <StackPanel Grid.Row="2" Spacing="3">
           <Button Classes="nav"
                   Classes.active="{Binding IsDashboardTab}"
                   Command="{Binding SelectTabCommand}"
-                  CommandParameter="0"
-                  Content="Стратегии и запуск" />
+                  CommandParameter="0">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconShield}" Width="14" Height="14" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Стратегии и запуск" FontSize="12" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
+
           <Button Classes="nav"
                   Classes.active="{Binding IsBenchmarkTab}"
                   Command="{Binding SelectTabCommand}"
-                  CommandParameter="1"
-                  Content="Тесты и подбор" />
+                  CommandParameter="1">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconSpeedometer}" Width="14" Height="14" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Тесты и подбор" FontSize="12" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
+
           <Button Classes="nav"
                   Classes.active="{Binding IsFiltersTab}"
                   Command="{Binding SelectTabCommand}"
-                  CommandParameter="2"
-                  Content="Фильтры и списки" />
+                  CommandParameter="2">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconSliders}" Width="14" Height="14" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Фильтры и списки" FontSize="12" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
+
           <Button Classes="nav"
                   Classes.active="{Binding IsDiagnosticsTab}"
                   Command="{Binding SelectTabCommand}"
-                  CommandParameter="3"
-                  Content="Диагностика и обновления" />
+                  CommandParameter="3">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconDiagnostics}" Width="14" Height="14" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Диагностика" FontSize="12" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
         </StackPanel>
 
+        <!-- Footer Actions (Minimal, NO version badges) -->
         <StackPanel Grid.Row="3" Spacing="6">
-          <Button Content="Перезапуск от админа"
-                  Classes="primary"
+          <Button Classes="primary"
                   IsVisible="{Binding CanRestartElevated}"
                   Command="{Binding RestartAsAdminCommand}"
                   HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Center"
-                  FontSize="12" />
-          <Button Content="Обновить статус"
-                  Command="{Binding RefreshStatusCommand}"
+                  HorizontalContentAlignment="Center">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6" HorizontalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconAdmin}" Width="12" Height="12" Foreground="#000000" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Запуск от админа" FontSize="11" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
+
+          <Button Command="{Binding RefreshStatusCommand}"
                   HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Center"
-                  FontSize="12" />
-          <TextBlock Text="{Binding AppVersionText, StringFormat='NetZapret v{0}'}"
-                     FontSize="11"
-                     Foreground="{StaticResource TextMuted}"
-                     HorizontalAlignment="Center"
-                     Margin="0,4,0,0" />
-          <TextBlock Text="{Binding CurrentVersionText, StringFormat='База списков: {0}'}"
-                     FontSize="11"
-                     Foreground="{StaticResource TextMuted}"
-                     HorizontalAlignment="Center" />
+                  HorizontalContentAlignment="Center">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6" HorizontalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconRefresh}" Width="12" Height="12" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Обновить статус" FontSize="11" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
         </StackPanel>
+
       </Grid>
     </Border>
 
+    <!-- ================= MAIN CONTENT AREA ================= -->
     <Grid Grid.Column="1" RowDefinitions="*,Auto">
-      <Grid Grid.Row="0" Margin="22,20,22,12">
+      
+      <!-- Tab Content View Container -->
+      <Grid Grid.Row="0" Margin="24,32,24,14">
         <views:DashboardView IsVisible="{Binding IsDashboardTab}" />
         <views:BenchmarkView IsVisible="{Binding IsBenchmarkTab}" />
         <views:FiltersView IsVisible="{Binding IsFiltersTab}" />
         <views:DiagnosticsView IsVisible="{Binding IsDiagnosticsTab}" />
       </Grid>
 
+      <!-- Minimal Status Bar (Bottom) -->
       <Border Grid.Row="1"
-              Background="{StaticResource BgSidebar}"
+              Background="#0D0D10"
               BorderBrush="{StaticResource BorderSubtle}"
               BorderThickness="0,1,0,0"
-              Padding="20,10">
+              Padding="20,8">
         <Grid ColumnDefinitions="*,Auto">
           <TextBlock Grid.Column="0"
                      Text="{Binding ActivityMessage}"
-                     FontSize="12"
+                     FontSize="11"
                      Foreground="{StaticResource TextMuted}"
                      VerticalAlignment="Center"
                      TextTrimming="CharacterEllipsis" />
-          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-            <ProgressBar IsIndeterminate="True"
-                         Width="90"
-                         Height="4"
-                         IsVisible="{Binding IsBusy}"
-                         VerticalAlignment="Center" />
-            <TextBlock Text="{Binding ElevationStatusText}"
-                       FontSize="11"
-                       Foreground="{StaticResource TextMuted}"
+
+          <ProgressBar Grid.Column="1"
+                       IsIndeterminate="True"
+                       Width="80"
+                       Height="2"
+                       IsVisible="{Binding IsBusy}"
                        VerticalAlignment="Center" />
-          </StackPanel>
         </Grid>
       </Border>
+
     </Grid>
   </Grid>
 </Window>
