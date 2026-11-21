@@ -38,7 +38,7 @@
                     IsEnabled="{Binding !IsBenchmarkRunning}"
                     Padding="14,7">
               <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6">
-                <PathIcon Grid.Column="0" Data="{StaticResource IconPlay}" Width="10" Height="10" Foreground="#000000" VerticalAlignment="Center" />
+                <PathIcon Grid.Column="0" Data="{StaticResource IconPlay}" Width="10" Height="10" VerticalAlignment="Center" />
                 <TextBlock Grid.Column="1" Text="Запустить" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
               </Grid>
             </Button>
@@ -48,7 +48,7 @@
                     IsVisible="{Binding IsBenchmarkRunning}"
                     Padding="14,7">
               <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6">
-                <PathIcon Grid.Column="0" Data="{StaticResource IconStop}" Width="10" Height="10" Foreground="#F87171" VerticalAlignment="Center" />
+                <PathIcon Grid.Column="0" Data="{StaticResource IconStop}" Width="10" Height="10" VerticalAlignment="Center" />
                 <TextBlock Grid.Column="1" Text="Отмена" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
               </Grid>
             </Button>
@@ -72,26 +72,38 @@
                      TextTrimming="CharacterEllipsis" />
 
           <Button Grid.Column="1"
-                  Content="Цели тестирования"
                   Command="{Binding OpenTargetsEditorCommand}"
                   IsEnabled="{Binding !IsBenchmarkRunning}"
                   FontSize="11"
-                  Padding="10,5" />
+                  Padding="10,5">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconTarget}" Width="11" Height="11" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Цели тестирования" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
 
           <Button Grid.Column="2"
                   Classes="primary"
-                  Content="Применить лучшую"
                   Command="{Binding ApplyBestStrategyCommand}"
                   IsVisible="{Binding HasBestStrategy}"
                   FontSize="11"
-                  Padding="10,5" />
+                  Padding="10,5">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconStar}" Width="11" Height="11" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Применить лучшую" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
 
           <Button Grid.Column="3"
-                  Content="Открыть отчёт"
                   Command="{Binding OpenLastReportCommand}"
                   IsVisible="{Binding HasLastReport}"
                   FontSize="11"
-                  Padding="10,5" />
+                  Padding="10,5">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconExternalLink}" Width="11" Height="11" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Открыть отчёт" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
         </Grid>
 
       </Grid>
@@ -107,18 +119,26 @@
                  VerticalAlignment="Center" />
 
       <Button Grid.Column="1"
-              Content="Выбрать все"
               Command="{Binding SelectAllStrategiesForTestCommand}"
               IsEnabled="{Binding !IsBenchmarkRunning}"
               FontSize="11"
-              Padding="8,4" />
+              Padding="8,4">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+          <PathIcon Grid.Column="0" Data="{StaticResource IconCheckAll}" Width="11" Height="11" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Text="Выбрать все" VerticalAlignment="Center" />
+        </Grid>
+      </Button>
 
       <Button Grid.Column="2"
-              Content="Снять все"
               Command="{Binding UnselectAllStrategiesForTestCommand}"
               IsEnabled="{Binding !IsBenchmarkRunning}"
               FontSize="11"
-              Padding="8,4" />
+              Padding="8,4">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+          <PathIcon Grid.Column="0" Data="{StaticResource IconCross}" Width="10" Height="10" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Text="Снять все" VerticalAlignment="Center" />
+        </Grid>
+      </Button>
     </Grid>
 
     <!-- ================= MAIN BENCHMARK WORKSPACE ================= -->
@@ -164,8 +184,7 @@
               <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="vm:BenchmarkRowVm">
                   <Border Background="#101013"
-                          BorderBrush="{StaticResource BorderSubtle}"
-                          BorderThickness="1"
+                          BorderThickness="0"
                           CornerRadius="6"
                           Padding="8,6"
                           Margin="0,0,0,4">
@@ -190,8 +209,7 @@
                       <!-- Expanded Details Section -->
                       <StackPanel IsVisible="{Binding IsExpanded}" Spacing="4" Margin="2,2,2,0">
                         <Border Background="#201113"
-                                BorderBrush="#4A181C"
-                                BorderThickness="1"
+                                BorderThickness="0"
                                 CornerRadius="4"
                                 Padding="8,4"
                                 IsVisible="{Binding HasError}">
@@ -202,8 +220,7 @@
                           <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="vm:BenchmarkTargetDetailVm">
                               <Border Background="#141418"
-                                      BorderBrush="{StaticResource BorderSubtle}"
-                                      BorderThickness="1"
+                                      BorderThickness="0"
                                       CornerRadius="4"
                                       Padding="8,4"
                                       Margin="0,0,0,2">

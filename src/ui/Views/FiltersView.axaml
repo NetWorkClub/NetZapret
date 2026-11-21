@@ -33,11 +33,15 @@
               </StackPanel>
             </Grid>
 
-            <Button Content="Сохранить Game Filter"
-                    Command="{Binding SaveGameFilterCommand}"
+            <Button Command="{Binding SaveGameFilterCommand}"
                     HorizontalAlignment="Left"
                     FontSize="11"
-                    Padding="12,6" />
+                    Padding="10,6">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6" VerticalAlignment="Center">
+                <PathIcon Grid.Column="0" Data="{StaticResource IconSave}" Width="11" Height="11" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="Сохранить Game Filter" VerticalAlignment="Center" />
+              </Grid>
+            </Button>
           </StackPanel>
         </Border>
 
@@ -60,24 +64,38 @@
             </ComboBox>
 
             <WrapPanel Orientation="Horizontal">
-              <Button Content="Применить режим"
-                      Command="{Binding ApplyIpsetModeCommand}"
+              <Button Command="{Binding ApplyIpsetModeCommand}"
                       Margin="0,0,6,6"
                       FontSize="11"
-                      Padding="10,5" />
-              <Button Content="Обновить IPSet"
-                      Command="{Binding UpdateIpsetFromRepoCommand}"
+                      Padding="9,5">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+                  <PathIcon Grid.Column="0" Data="{StaticResource IconCheck}" Width="10" Height="10" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="1" Text="Применить режим" VerticalAlignment="Center" />
+                </Grid>
+              </Button>
+
+              <Button Command="{Binding UpdateIpsetFromRepoCommand}"
                       IsEnabled="{Binding !IsBusy}"
                       Margin="0,0,6,6"
                       FontSize="11"
-                      Padding="10,5" />
-              <Button Content="Обновить все списки"
-                      Classes="primary"
+                      Padding="9,5">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+                  <PathIcon Grid.Column="0" Data="{StaticResource IconRefresh}" Width="10" Height="10" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="1" Text="Обновить IPSet" VerticalAlignment="Center" />
+                </Grid>
+              </Button>
+
+              <Button Classes="primary"
                       Command="{Binding UpdateAllListsCommand}"
                       IsEnabled="{Binding !IsBusy}"
                       Margin="0,0,6,6"
                       FontSize="11"
-                      Padding="10,5" />
+                      Padding="9,5">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+                  <PathIcon Grid.Column="0" Data="{StaticResource IconDownload}" Width="10" Height="10" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="1" Text="Обновить все списки" VerticalAlignment="Center" />
+                </Grid>
+              </Button>
             </WrapPanel>
           </StackPanel>
         </Border>
@@ -106,10 +124,14 @@
                   </ComboBox.ItemTemplate>
                 </ComboBox>
                 <Button Grid.Column="1"
-                        Content="Применить"
                         FontSize="11"
-                        Padding="10,6"
-                        Command="{Binding ApplyDiscordFakeCommand}" />
+                        Padding="9,6"
+                        Command="{Binding ApplyDiscordFakeCommand}">
+                  <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+                    <PathIcon Grid.Column="0" Data="{StaticResource IconCheck}" Width="10" Height="10" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Text="Применить" VerticalAlignment="Center" />
+                  </Grid>
+                </Button>
               </Grid>
             </StackPanel>
 
@@ -129,10 +151,14 @@
                   </ComboBox.ItemTemplate>
                 </ComboBox>
                 <Button Grid.Column="1"
-                        Content="Применить"
                         FontSize="11"
-                        Padding="10,6"
-                        Command="{Binding ApplyGameFakeCommand}" />
+                        Padding="9,6"
+                        Command="{Binding ApplyGameFakeCommand}">
+                  <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+                    <PathIcon Grid.Column="0" Data="{StaticResource IconCheck}" Width="10" Height="10" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Text="Применить" VerticalAlignment="Center" />
+                  </Grid>
+                </Button>
               </Grid>
             </StackPanel>
           </Grid>
@@ -151,23 +177,35 @@
                        VerticalAlignment="Center" />
 
             <Button Grid.Column="1"
-                    Content="Папка assets"
                     Command="{Binding OpenAssetsFolderCommand}"
                     FontSize="11"
-                    Padding="8,5" />
+                    Padding="8,5">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+                <PathIcon Grid.Column="0" Data="{StaticResource IconFolder}" Width="11" Height="11" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="Папка assets" VerticalAlignment="Center" />
+              </Grid>
+            </Button>
 
             <Button Grid.Column="2"
-                    Content="Перечитать"
                     Command="{Binding ReloadUserListsCommand}"
                     FontSize="11"
-                    Padding="8,5" />
+                    Padding="8,5">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+                <PathIcon Grid.Column="0" Data="{StaticResource IconRefresh}" Width="10" Height="10" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="Перечитать" VerticalAlignment="Center" />
+              </Grid>
+            </Button>
 
             <Button Grid.Column="3"
                     Classes="primary"
-                    Content="Сохранить списки"
                     Command="{Binding SaveUserListsCommand}"
                     FontSize="11"
-                    Padding="10,5" />
+                    Padding="9,5">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+                <PathIcon Grid.Column="0" Data="{StaticResource IconSave}" Width="11" Height="11" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="Сохранить списки" VerticalAlignment="Center" />
+              </Grid>
+            </Button>
           </Grid>
 
           <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">

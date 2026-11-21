@@ -7,117 +7,170 @@
         Title="NetZapret"
         Width="1100"
         Height="700"
-        MinWidth="920"
-        MinHeight="600"
+        MinWidth="820"
+        MinHeight="580"
         WindowStartupLocation="CenterScreen"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="36"
         ExtendClientAreaChromeHints="PreferSystemChrome"
         Background="#09090B">
 
-  <!-- Root Layout: Sidebar (Col 0) + Content (Col 1) -->
-  <Grid ColumnDefinitions="220,*">
+  <!-- Root Layout: Collapsible Sidebar (Col 0) + Content Area (Col 1) -->
+  <Grid ColumnDefinitions="Auto,*">
     
     <!-- ================= SIDEBAR ================= -->
     <Border Grid.Column="0"
+            Classes="sidebar"
+            Classes.collapsed="{Binding IsSidebarCollapsed}"
             Background="#0D0D10"
             BorderBrush="{StaticResource BorderSubtle}"
-            BorderThickness="0,0,1,0"
-            Padding="14,32,14,14">
+            BorderThickness="0,0,1,0">
+      <Border.Transitions>
+        <Transitions>
+          <DoubleTransition Property="Width" Duration="0:0:0.18" Easing="CubicEaseOut" />
+        </Transitions>
+      </Border.Transitions>
+
       <Grid RowDefinitions="Auto,Auto,*,Auto">
         
-        <!-- App Title (Clean, no badges) -->
-        <TextBlock Grid.Row="0"
-                   Text="NetZapret"
-                   FontSize="15"
-                   FontWeight="SemiBold"
-                   Foreground="{StaticResource TextPrimary}"
-                   Margin="4,0,4,16" />
-
-        <!-- Status Indicator (1 clean line) -->
-        <Border Grid.Row="1"
-                Classes="card"
-                Padding="10,8"
-                Margin="0,0,0,16">
-          <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-            <Ellipse Width="6" Height="6"
-                     Fill="{StaticResource AccentGreen}"
-                     IsVisible="{Binding IsBypassRunning}"
-                     VerticalAlignment="Center" />
-            <Ellipse Width="6" Height="6"
-                     Fill="{StaticResource TextMuted}"
-                     IsVisible="{Binding !IsBypassRunning}"
-                     VerticalAlignment="Center" />
-            <TextBlock Text="{Binding StatusText}"
-                       FontWeight="Medium"
-                       FontSize="12"
+        <!-- App Header & Smart Collapse Toggle -->
+        <Grid Grid.Row="0" Margin="2,0,2,16">
+          <!-- Expanded State Header -->
+          <Grid IsVisible="{Binding !IsSidebarCollapsed}" ColumnDefinitions="*,Auto">
+            <TextBlock Grid.Column="0"
+                       Text="NetZapret"
+                       FontSize="15"
+                       FontWeight="SemiBold"
                        Foreground="{StaticResource TextPrimary}"
                        VerticalAlignment="Center" />
-          </StackPanel>
+            <Button Grid.Column="1"
+                    Classes="icon-only"
+                    Command="{Binding ToggleSidebarCommand}"
+                    ToolTip.Tip="Свернуть боковое меню"
+                    VerticalAlignment="Center">
+              <PathIcon Data="{StaticResource IconPanelLeft}" Width="13" Height="13" />
+            </Button>
+          </Grid>
+
+          <!-- Collapsed State Header: Compact Centered Toggle Button -->
+          <Button IsVisible="{Binding IsSidebarCollapsed}"
+                  Classes="icon-only"
+                  Command="{Binding ToggleSidebarCommand}"
+                  ToolTip.Tip="Развернуть боковое меню"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
+            <PathIcon Data="{StaticResource IconPanelLeft}" Width="13" Height="13" />
+          </Button>
+        </Grid>
+
+        <!-- Status Indicator -->
+        <Border Grid.Row="1"
+                Classes="card"
+                Padding="8,7"
+                Margin="0,0,0,16"
+                ToolTip.Tip="{Binding StatusText}">
+          <Grid>
+            <!-- Expanded: Dot + Text -->
+            <StackPanel IsVisible="{Binding !IsSidebarCollapsed}"
+                        Orientation="Horizontal"
+                        Spacing="8"
+                        VerticalAlignment="Center">
+              <Ellipse Width="6" Height="6"
+                       Fill="{StaticResource AccentGreen}"
+                       IsVisible="{Binding IsBypassRunning}"
+                       VerticalAlignment="Center" />
+              <Ellipse Width="6" Height="6"
+                       Fill="{StaticResource TextMuted}"
+                       IsVisible="{Binding !IsBypassRunning}"
+                       VerticalAlignment="Center" />
+              <TextBlock Text="{Binding StatusText}"
+                         FontWeight="Medium"
+                         FontSize="12"
+                         Foreground="{StaticResource TextPrimary}"
+                         VerticalAlignment="Center"
+                         TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+
+            <!-- Collapsed: Centered Glow Dot -->
+            <StackPanel IsVisible="{Binding IsSidebarCollapsed}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+              <Ellipse Width="8" Height="8"
+                       Fill="{StaticResource AccentGreen}"
+                       IsVisible="{Binding IsBypassRunning}" />
+              <Ellipse Width="8" Height="8"
+                       Fill="{StaticResource TextMuted}"
+                       IsVisible="{Binding !IsBypassRunning}" />
+            </StackPanel>
+          </Grid>
         </Border>
 
-        <!-- Navigation Items (Linear Style) -->
-        <StackPanel Grid.Row="2" Spacing="3">
+        <!-- Navigation Items -->
+        <StackPanel Grid.Row="2" Spacing="4">
           <Button Classes="nav"
                   Classes.active="{Binding IsDashboardTab}"
                   Command="{Binding SelectTabCommand}"
-                  CommandParameter="0">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-              <PathIcon Grid.Column="0" Data="{StaticResource IconShield}" Width="14" Height="14" VerticalAlignment="Center" />
-              <TextBlock Grid.Column="1" Text="Стратегии и запуск" FontSize="12" VerticalAlignment="Center" />
+                  CommandParameter="0"
+                  ToolTip.Tip="Стратегии и запуск">
+            <Grid ColumnDefinitions="16,*">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconShield}" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Стратегии и запуск" FontSize="12" Margin="10,0,0,0" VerticalAlignment="Center" IsVisible="{Binding !IsSidebarCollapsed}" />
             </Grid>
           </Button>
 
           <Button Classes="nav"
                   Classes.active="{Binding IsBenchmarkTab}"
                   Command="{Binding SelectTabCommand}"
-                  CommandParameter="1">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-              <PathIcon Grid.Column="0" Data="{StaticResource IconSpeedometer}" Width="14" Height="14" VerticalAlignment="Center" />
-              <TextBlock Grid.Column="1" Text="Тесты и подбор" FontSize="12" VerticalAlignment="Center" />
+                  CommandParameter="1"
+                  ToolTip.Tip="Тесты и подбор">
+            <Grid ColumnDefinitions="16,*">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconSpeedometer}" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Тесты и подбор" FontSize="12" Margin="10,0,0,0" VerticalAlignment="Center" IsVisible="{Binding !IsSidebarCollapsed}" />
             </Grid>
           </Button>
 
           <Button Classes="nav"
                   Classes.active="{Binding IsFiltersTab}"
                   Command="{Binding SelectTabCommand}"
-                  CommandParameter="2">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-              <PathIcon Grid.Column="0" Data="{StaticResource IconSliders}" Width="14" Height="14" VerticalAlignment="Center" />
-              <TextBlock Grid.Column="1" Text="Фильтры и списки" FontSize="12" VerticalAlignment="Center" />
+                  CommandParameter="2"
+                  ToolTip.Tip="Фильтры и списки">
+            <Grid ColumnDefinitions="16,*">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconSliders}" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Фильтры и списки" FontSize="12" Margin="10,0,0,0" VerticalAlignment="Center" IsVisible="{Binding !IsSidebarCollapsed}" />
             </Grid>
           </Button>
 
           <Button Classes="nav"
                   Classes.active="{Binding IsDiagnosticsTab}"
                   Command="{Binding SelectTabCommand}"
-                  CommandParameter="3">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-              <PathIcon Grid.Column="0" Data="{StaticResource IconDiagnostics}" Width="14" Height="14" VerticalAlignment="Center" />
-              <TextBlock Grid.Column="1" Text="Диагностика" FontSize="12" VerticalAlignment="Center" />
+                  CommandParameter="3"
+                  ToolTip.Tip="Диагностика">
+            <Grid ColumnDefinitions="16,*">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconDiagnostics}" Width="14" Height="14" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Диагностика" FontSize="12" Margin="10,0,0,0" VerticalAlignment="Center" IsVisible="{Binding !IsSidebarCollapsed}" />
             </Grid>
           </Button>
         </StackPanel>
 
-        <!-- Footer Actions (Minimal, NO version badges) -->
+        <!-- Footer Actions -->
         <StackPanel Grid.Row="3" Spacing="6">
           <Button Classes="primary"
                   IsVisible="{Binding CanRestartElevated}"
                   Command="{Binding RestartAsAdminCommand}"
                   HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Center">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6" HorizontalAlignment="Center">
-              <PathIcon Grid.Column="0" Data="{StaticResource IconAdmin}" Width="12" Height="12" Foreground="#000000" VerticalAlignment="Center" />
-              <TextBlock Grid.Column="1" Text="Запуск от админа" FontSize="11" VerticalAlignment="Center" />
+                  ToolTip.Tip="Запуск от админа">
+            <Grid ColumnDefinitions="16,*" HorizontalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconAdmin}" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Запуск от админа" FontSize="11" Margin="6,0,0,0" VerticalAlignment="Center" IsVisible="{Binding !IsSidebarCollapsed}" />
             </Grid>
           </Button>
 
           <Button Command="{Binding RefreshStatusCommand}"
                   HorizontalAlignment="Stretch"
-                  HorizontalContentAlignment="Center">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6" HorizontalAlignment="Center">
-              <PathIcon Grid.Column="0" Data="{StaticResource IconRefresh}" Width="12" Height="12" VerticalAlignment="Center" />
-              <TextBlock Grid.Column="1" Text="Обновить статус" FontSize="11" VerticalAlignment="Center" />
+                  ToolTip.Tip="Обновить статус">
+            <Grid ColumnDefinitions="16,*" HorizontalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconRefresh}" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Обновить статус" FontSize="11" Margin="6,0,0,0" VerticalAlignment="Center" IsVisible="{Binding !IsSidebarCollapsed}" />
             </Grid>
           </Button>
         </StackPanel>

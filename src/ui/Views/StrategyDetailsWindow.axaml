@@ -68,8 +68,7 @@
             <ScrollViewer Padding="0,0,8,0">
               <StackPanel Spacing="6">
                 <Border Background="#201113"
-                        BorderBrush="#4A181C"
-                        BorderThickness="1"
+                        BorderThickness="0"
                         CornerRadius="4"
                         Padding="8,6"
                         IsVisible="{Binding EditorTargetLastBenchmark.HasError, FallbackValue=False}">
@@ -80,8 +79,7 @@
                   <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:BenchmarkTargetDetailVm">
                       <Border Background="#101013"
-                              BorderBrush="{StaticResource BorderSubtle}"
-                              BorderThickness="1"
+                              BorderThickness="0"
                               CornerRadius="4"
                               Padding="8,6"
                               Margin="0,0,0,4">
@@ -163,12 +161,16 @@
     <!-- Bottom Controls -->
     <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8" VerticalAlignment="Center">
       <Button Grid.Column="0"
-              Content="Удалить стратегию"
               Classes="danger"
               Command="{Binding DeleteCustomStrategyFromEditorCommand}"
               IsVisible="{Binding EditorCanDelete}"
               FontSize="11"
-              Padding="10,6" />
+              Padding="10,6">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+          <PathIcon Grid.Column="0" Data="{StaticResource IconTrash}" Width="11" Height="11" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Text="Удалить стратегию" VerticalAlignment="Center" />
+        </Grid>
+      </Button>
 
       <TextBlock Grid.Column="1"
                  Text="{Binding EditorError}"
@@ -178,17 +180,25 @@
                  TextWrapping="Wrap" />
 
       <Button Grid.Column="2"
-              Content="Закрыть"
               Click="OnCloseClick"
               FontSize="11"
-              Padding="12,6" />
+              Padding="12,6">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+          <PathIcon Grid.Column="0" Data="{StaticResource IconCross}" Width="10" Height="10" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Text="Закрыть" VerticalAlignment="Center" />
+        </Grid>
+      </Button>
 
       <Button Grid.Column="3"
               Classes="primary"
-              Content="{Binding EditorSaveButtonText}"
               Command="{Binding SaveCustomStrategyCommand}"
               FontSize="11"
-              Padding="14,6" />
+              Padding="14,6">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+          <PathIcon Grid.Column="0" Data="{StaticResource IconSave}" Width="11" Height="11" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Text="{Binding EditorSaveButtonText}" VerticalAlignment="Center" />
+        </Grid>
+      </Button>
     </Grid>
 
   </Grid>

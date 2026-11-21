@@ -196,6 +196,10 @@ public sealed partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private bool _closeToTray = true;
 
+
+    [ObservableProperty]
+    private bool _isSidebarCollapsed;
+
     public string AppVersionText => UpdateService.AppVersion;
 
     public bool IsDashboardTab => SelectedTabIndex == 0;
@@ -250,6 +254,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase
             AutoCheckUpdates = _appSettings.AutoCheckUpdates;
             StartMinimized = _appSettings.StartMinimized;
             CloseToTray = _appSettings.CloseToTray;
+            IsSidebarCollapsed = _appSettings.IsSidebarCollapsed;
             CurrentVersionText = UpdateService.GetLocalVersion(_assetsPath);
 
             LoadTestTargets();
@@ -331,6 +336,19 @@ public sealed partial class MainWindowViewModel : ViewModelBase
         if (_isInitializing) return;
         _appSettings.CloseToTray = value;
         _ = StrategyStore.SaveSettingsAsync(_assetsPath, _appSettings);
+    }
+
+    partial void OnIsSidebarCollapsedChanged(bool value)
+    {
+        if (_isInitializing) return;
+        _appSettings.IsSidebarCollapsed = value;
+        _ = StrategyStore.SaveSettingsAsync(_assetsPath, _appSettings);
+    }
+
+    [RelayCommand]
+    private void ToggleSidebar()
+    {
+        IsSidebarCollapsed = !IsSidebarCollapsed;
     }
 
     partial void OnBestStrategyIdChanged(string? value) => OnPropertyChanged(nameof(HasBestStrategy));

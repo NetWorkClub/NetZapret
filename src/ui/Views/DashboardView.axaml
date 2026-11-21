@@ -28,7 +28,7 @@
                      MaxLines="2"
                      MinHeight="28" />
 
-          <!-- Global Warning (Subtle 1-line, no loud boxes) -->
+          <!-- Global Warning -->
           <TextBlock Text="Внимание: глобальный режим затрагивает весь IPv4 TCP-трафик."
                      FontSize="11"
                      Foreground="#EAB308"
@@ -62,29 +62,37 @@
           <!-- Service Actions Row -->
           <Grid ColumnDefinitions="*,*" ColumnSpacing="6">
             <Button Grid.Column="0"
-                    Content="Служба"
                     Command="{Binding InstallServiceCommand}"
                     IsEnabled="{Binding !IsBusy}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
                     FontSize="11"
-                    Padding="8,5" />
+                    Padding="8,5">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" HorizontalAlignment="Center">
+                <PathIcon Grid.Column="0" Data="{StaticResource IconServer}" Width="11" Height="11" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="Служба" VerticalAlignment="Center" />
+              </Grid>
+            </Button>
 
             <Button Grid.Column="1"
-                    Content="Удалить"
                     Command="{Binding RemoveServiceCommand}"
                     IsEnabled="{Binding !IsBusy}"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
                     FontSize="11"
-                    Padding="8,5" />
+                    Padding="8,5">
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" HorizontalAlignment="Center">
+                <PathIcon Grid.Column="0" Data="{StaticResource IconTrash}" Width="11" Height="11" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="Удалить" VerticalAlignment="Center" />
+              </Grid>
+            </Button>
           </Grid>
 
         </StackPanel>
       </Grid>
     </Border>
 
-    <!-- ================= STRATEGIES HEADER (Clean, no badges) ================= -->
+    <!-- ================= STRATEGIES HEADER ================= -->
     <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6" VerticalAlignment="Center">
       <TextBlock Grid.Column="0"
                  Text="Стратегии"
@@ -94,20 +102,28 @@
                  VerticalAlignment="Center" />
 
       <Button Grid.Column="1"
-              Content="+ Своя"
               Command="{Binding OpenNewStrategyEditorCommand}"
               FontSize="11"
-              Padding="10,5" />
+              Padding="10,5">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" HorizontalAlignment="Center">
+          <PathIcon Grid.Column="0" Data="{StaticResource IconPlus}" Width="10" Height="10" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Text="Своя" VerticalAlignment="Center" />
+        </Grid>
+      </Button>
 
       <Button Grid.Column="2"
-              Content="Параметры"
               Command="{Binding OpenStrategyDetailsCommand}"
               CommandParameter="{Binding SelectedStrategy}"
               FontSize="11"
-              Padding="10,5" />
+              Padding="10,5">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" HorizontalAlignment="Center">
+          <PathIcon Grid.Column="0" Data="{StaticResource IconSettings}" Width="11" Height="11" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Text="Параметры" VerticalAlignment="Center" />
+        </Grid>
+      </Button>
     </Grid>
 
-    <!-- ================= STRATEGIES LIST (Zero slop, zero pill soup) ================= -->
+    <!-- ================= STRATEGIES LIST ================= -->
     <Border Grid.Row="2" Classes="card" Padding="4">
       <ListBox x:Name="StrategiesList"
                ItemsSource="{Binding Strategies}"
@@ -130,23 +146,23 @@
                            TextWrapping="NoWrap" />
               </StackPanel>
 
-              <!-- Right: Clean Typography Meta (No pill borders!) -->
+              <!-- Right: Clean Typography Meta -->
               <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                <!-- Top Star (clean text, no badge box) -->
+                <!-- Top Star -->
                 <TextBlock Text="★"
                            FontSize="12"
                            Foreground="{StaticResource AccentGreen}"
                            IsVisible="{Binding IsLastBest}"
                            VerticalAlignment="Center" />
 
-                <!-- Benchmark Latency (clean text) -->
+                <!-- Benchmark Latency -->
                 <TextBlock Text="{Binding LastBenchmarkSummary}"
                            FontSize="11"
                            Foreground="{StaticResource TextSecondary}"
                            IsVisible="{Binding HasLastBenchmark}"
                            VerticalAlignment="Center" />
 
-                <!-- Category (clean muted text) -->
+                <!-- Category -->
                 <TextBlock Text="{Binding Category}"
                            FontSize="11"
                            Foreground="{StaticResource TextMuted}"

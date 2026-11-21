@@ -40,54 +40,78 @@
         </StackPanel>
 
         <!-- Right: Action Center Buttons -->
-        <StackPanel Grid.Column="1" Spacing="6" MinWidth="200" VerticalAlignment="Center">
-          <Button Content="Проверить базу списков"
-                  Command="{Binding CheckUpdatesCommand}"
+        <StackPanel Grid.Column="1" Spacing="6" MinWidth="210" VerticalAlignment="Center">
+          <Button Command="{Binding CheckUpdatesCommand}"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Center"
                   FontSize="11"
-                  Padding="10,6" />
+                  Padding="10,6">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6" HorizontalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconSearch}" Width="11" Height="11" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Проверить базу списков" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
 
           <Button Classes="primary"
-                  Content="Обновить все списки"
                   Command="{Binding UpdateAllListsCommand}"
                   IsEnabled="{Binding !IsBusy}"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Center"
                   FontSize="11"
-                  Padding="10,6" />
+                  Padding="10,6">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6" HorizontalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconDownload}" Width="11" Height="11" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Обновить все списки" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
 
-          <Button Content="Changelog Flowseal (GitHub)"
-                  Command="{Binding OpenUpdatePageCommand}"
+          <Button Command="{Binding OpenUpdatePageCommand}"
                   IsVisible="{Binding IsUpdateAvailable}"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Center"
                   FontSize="11"
-                  Padding="10,6" />
+                  Padding="10,6">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6" HorizontalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconExternalLink}" Width="11" Height="11" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Changelog Flowseal (GitHub)" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
 
-          <Button Content="Обновить файл hosts"
-                  Command="{Binding UpdateHostsCommand}"
+          <Button Command="{Binding UpdateHostsCommand}"
                   IsEnabled="{Binding !IsBusy}"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Center"
                   FontSize="11"
-                  Padding="10,6" />
+                  Padding="10,6">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6" HorizontalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconEdit}" Width="11" Height="11" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Обновить файл hosts" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
 
-          <Button Content="Очистить кэш Discord"
-                  Command="{Binding ClearDiscordCacheCommand}"
+          <Button Command="{Binding ClearDiscordCacheCommand}"
                   IsEnabled="{Binding !IsBusy}"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Center"
                   FontSize="11"
-                  Padding="10,6" />
+                  Padding="10,6">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6" HorizontalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconBroom}" Width="11" Height="11" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Очистить кэш Discord" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
 
           <Button Classes="danger"
-                  Content="Выйти из NetZapret"
                   Command="{Binding ExitAppCommand}"
                   HorizontalAlignment="Stretch"
                   HorizontalContentAlignment="Center"
                   FontSize="11"
-                  Padding="10,6" />
+                  Padding="10,6">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6" HorizontalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconExit}" Width="11" Height="11" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Выйти из NetZapret" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
         </StackPanel>
 
       </Grid>
@@ -102,11 +126,15 @@
 
           <Button Grid.Column="1"
                   Classes="primary"
-                  Content="Запустить диагностику"
                   Command="{Binding RunDiagnosticsCommand}"
                   IsEnabled="{Binding !IsBusy}"
                   FontSize="11"
-                  Padding="12,6" />
+                  Padding="12,6">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6" HorizontalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconPlay}" Width="10" Height="10" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Запустить диагностику" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
         </Grid>
 
         <ScrollViewer Grid.Row="1" Padding="0,0,6,0">
@@ -114,8 +142,7 @@
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="vm:DiagnosticItemVm">
                 <Border Background="#101013"
-                        BorderBrush="{StaticResource BorderSubtle}"
-                        BorderThickness="1"
+                        BorderThickness="0"
                         CornerRadius="6"
                         Padding="10,8"
                         Margin="0,0,0,4">

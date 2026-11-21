@@ -25,19 +25,27 @@
       </StackPanel>
 
       <Button Grid.Column="1"
-              Content="Сбросить"
               Command="{Binding ReloadTestTargetsCommand}"
               VerticalAlignment="Center"
               FontSize="11"
-              Padding="10,5" />
+              Padding="10,5">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+          <PathIcon Grid.Column="0" Data="{StaticResource IconRefresh}" Width="10" Height="10" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Text="Сбросить" VerticalAlignment="Center" />
+        </Grid>
+      </Button>
 
       <Button Grid.Column="2"
               Classes="primary"
-              Content="Сохранить"
               Command="{Binding SaveTestTargetsCommand}"
               VerticalAlignment="Center"
               FontSize="11"
-              Padding="12,5" />
+              Padding="12,5">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+          <PathIcon Grid.Column="0" Data="{StaticResource IconSave}" Width="11" Height="11" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Text="Сохранить" VerticalAlignment="Center" />
+        </Grid>
+      </Button>
     </Grid>
 
     <!-- Targets List Card -->
@@ -47,8 +55,7 @@
           <ItemsControl.ItemTemplate>
             <DataTemplate x:DataType="vm:TargetItemVm">
               <Border Background="#101013"
-                      BorderBrush="{StaticResource BorderSubtle}"
-                      BorderThickness="1"
+                      BorderThickness="0"
                       CornerRadius="6"
                       Padding="8,5"
                       Margin="0,0,0,6">
@@ -56,12 +63,17 @@
                   <TextBox Grid.Column="0" Text="{Binding Name}" Watermark="Название" FontSize="11" />
                   <TextBox Grid.Column="1" Text="{Binding Value}" Watermark="https://site.com или PING:1.1.1.1" FontSize="11" />
                   <Button Grid.Column="2"
-                          Content="Удалить"
                           Classes="danger"
                           Padding="8,5"
                           FontSize="10"
+                          ToolTip.Tip="Удалить цель"
                           Command="{ReflectionBinding DataContext.RemoveTestTargetCommand, ElementName=TargetsWin}"
-                          CommandParameter="{Binding}" />
+                          CommandParameter="{Binding}">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4" VerticalAlignment="Center">
+                      <PathIcon Grid.Column="0" Data="{StaticResource IconTrash}" Width="10" Height="10" VerticalAlignment="Center" />
+                      <TextBlock Grid.Column="1" Text="Удалить" VerticalAlignment="Center" />
+                    </Grid>
+                  </Button>
                 </Grid>
               </Border>
             </DataTemplate>
@@ -79,10 +91,14 @@
           <TextBox Grid.Column="1" Text="{Binding NewTargetValue}" Watermark="https://example.com или PING:8.8.8.8" FontSize="11" />
           <Button Grid.Column="2"
                   Classes="primary"
-                  Content="Добавить"
                   Command="{Binding AddTestTargetCommand}"
                   FontSize="11"
-                  Padding="12,6" />
+                  Padding="12,6">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5" VerticalAlignment="Center">
+              <PathIcon Grid.Column="0" Data="{StaticResource IconPlus}" Width="10" Height="10" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="Добавить" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
         </Grid>
       </StackPanel>
     </Border>

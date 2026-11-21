@@ -29,6 +29,9 @@ public sealed class AppSettings
 
     [JsonPropertyName("useServiceMode")]
     public bool UseServiceMode { get; set; }
+
+    [JsonPropertyName("isSidebarCollapsed")]
+    public bool IsSidebarCollapsed { get; set; }
 }
 
 public static class StrategyStore
